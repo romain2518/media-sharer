@@ -1,0 +1,29 @@
+:
+:
+BUG REPORT: code_report, url, comment, is_important, is_processed
+:
+:
+
+STATUS: code_status, status
+Sets, 11 STATUS, 0N USER
+Writes(1), 11 BUG REPORT, 0N USER
+Writes(2), 11 USER REPORT, 0N USER
+USER REPORT: code_report, reported_user, comment, is_important, is_processed
+
+Is linked to, 11 STATUS, 0N CONVERSATION
+Participates, 2N CONVERSATION, 0N USER
+USER: code_user, pseudo, email, roles, password, picture_path, is_verified
+Blocks, 0N USER, 0N USER
+:
+
+CONVERSATION: code_conversation
+Sends, 11 MESSAGE, 0N USER
+Makes, 11 BAN, 0N USER
+Writes(3), 11 PATCH NOTE, 0N USER
+:
+
+Has, 11 MESSAGE, 0N CONVERSATION
+MESSAGE: code_message, message
+BAN: code_ban, email, comment
+:
+PATCH NOTE: code_note, note, date
