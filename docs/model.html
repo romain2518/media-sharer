@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model</title>
+  <link rel="stylesheet" href="./model/normalize.css">
+  <link rel="stylesheet" href="./model/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Media sharer V1</h1>
+  <main>
+    <section>
+      <header class="myself">
+        <img class="profile-pic" src="https://i.pravatar.cc/150?img=3" alt="Photo de profil">
+        <h2>Pseudo</h2>
+        <div class="dropdown">
+          <button type="button">
+            <img src="./model/options.svg" alt="Bouton de menu dépliant">
+          </button>
+          <div class="dropdown-content">
+            <ul>
+              <li><a href="#"><img src="./model/edit.svg" alt="Crayon"><span>Modifier le profil</span></a></li>
+              <li><a href="#"><img src="./model/edit.svg" alt="Crayon"><span>Modifier les identifiants</span></a></li>
+              <li><a href="#"><img src="./model/delete.svg" alt="Poubelle"><span>Supprimer le compte</span></a></li>
+              <li><a href="#"><img src="./model/logout.svg" alt="Icône de déconnexion"><span>Déconnexion</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="search">
+        <input autocomplete="off" autocorrect="off" type="text" spellcheck="false" placeholder="Rechercher" aria-label="Rechercher">
+        <button type="button">
+          <img src="./model/search.svg" alt="Loupe">
+        </button>
+      </div>
+      <nav class="list-selector">
+        <ul>
+          <li><button for="chat-list" class="active">Conversations</button></li>
+          <li><button for="user-list">Utilisateurs</button></li>
+          <li><button for="block-list">Bloqués</button></li>
+        </ul>
+      </nav>
+      <button class="list-displayer show">
+        <span class="show">Montrer la liste</span>
+        <span class="hide">Cacher la liste</span>
+        <div>&gt;</div>
+      </button>
+      <div class="list-container">
+        <div class="chat-list list active">
+          <ul>
+            <li>
+              <article class="user-card has-notification" tabindex="0">
+                <img class="user-pic" src="https://i.pravatar.cc/150?img=1" alt="Photo de profil de l'utilisateur">
+                <div class="info-wrapper">
+                  <h3 title="Patate">Patate</h3>
+                  <p title="Hier">Hier</p>
+                </div>
+                <div class="notification"></div>
+                <div class="dropdown">
+                  <button type="button">
+                    <img src="./model/options.svg" alt="Bouton de menu dépliant">
+                  </button>
+                  <div class="dropdown-content">
+                    <ul>
+                      <li><a href="#"><img src="./model/mail-open.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+                      <li><a href="#"><img src="./model/mail.svg" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+                      <li><a href="#"><img src="./model/block.svg" alt="Rond barré"><span>Bloquer</span></a></li>
+                      <li><a href="#"><img src="./model/flag.svg" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="user-card has-notification" tabindex="0">
+                <img class="user-pic" src="https://i.pravatar.cc/150?img=1" alt="Photo de profil de l'utilisateur">
+                <div class="info-wrapper">
+                  <h3 title="Patate">Patate</h3>
+                  <p title="Hier">Hier</p>
+                </div>
+                <div class="notification"></div>
+                <div class="dropdown">
+                  <button type="button">
+                    <img src="./model/options.svg" alt="Bouton de menu dépliant">
+                  </button>
+                  <div class="dropdown-content">
+                    <ul>
+                      <li><a href="#"><img src="./model/mail-open.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+                      <li><a href="#"><img src="./model/mail.svg" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+                      <li><a href="#"><img src="./model/block.svg" alt="Rond barré"><span>Bloquer</span></a></li>
+                      <li><a href="#"><img src="./model/flag.svg" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="user-card" tabindex="0">
+                <img class="user-pic" src="https://i.pravatar.cc/150?img=1" alt="Photo de profil de l'utilisateur">
+                <div class="info-wrapper">
+                  <h3 title="Patate">Patate</h3>
+                  <p title="Hier">Hier</p>
+                </div>
+                <div class="notification"></div>
+                <div class="dropdown">
+                  <button type="button">
+                    <img src="./model/options.svg" alt="Bouton de menu dépliant">
+                  </button>
+                  <div class="dropdown-content">
+                    <ul>
+                      <li><a href="#"><img src="./model/mail-open.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+                      <li><a href="#"><img src="./model/mail.svg" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+                      <li><a href="#"><img src="./model/block.svg" alt="Rond barré"><span>Bloquer</span></a></li>
+                      <li><a href="#"><img src="./model/flag.svg" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <!-- <li>
+              <p class="empty">Aucun utilisateur trouvé...</p>
+            </li> -->
+          </ul>
+        </div>
+        <div class="user-list list">
+          <ul>
+            <li>
+              <article class="user-card">
+                <img class="user-pic" src="https://i.pravatar.cc/150?img=4" alt="Photo de profil de l'utilisateur">
+                <div class="info-wrapper">
+                  <h3>Unicorn</h3>
+                </div>
+                <div class="dropdown">
+                  <button type="button">
+                    <img src="./model/options.svg" alt="Bouton de menu dépliant">
+                  </button>
+                  <div class="dropdown-content">
+                    <ul>
+                      <li><a href="#"><img src="./model/block.svg" alt="Rond barré"><span>Bloquer</span></a></li>
+                      <li><a href="#"><img src="./model/flag.svg" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <!-- <li>
+              <p class="empty">Aucun utilisateur trouvé...</p>
+            </li> -->
+          </ul>
+        </div>
+        <div class="block-list list">
+          <ul>
+            <!-- <li>
+              <article class="user-card">
+                <img class="user-pic" src="https://i.pravatar.cc/150?img=18" alt="Photo de profil de l'utilisateur">
+                <div class="info-wrapper">
+                  <h3>Aragog</h3>
+                </div>
+                <div class="dropdown">
+                  <button type="button">
+                    <img src="./model/options.svg" alt="Bouton de menu dépliant">
+                  </button>
+                  <div class="dropdown-content">
+                    <ul>
+                      <li><a href="#"><img src="./model/unblock.svg" alt="Rond barré"><span>Débloquer</span></a></li>
+                      <li><a href="#"><img src="./model/flag.svg" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </article>
+            </li> -->
+            <li>
+              <p class="empty">Aucun utilisateur trouvé...</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="call calling">
+        <div class="timer"><img src="./model/clock.svg" alt="Horloge"><span>01:34</span></div>
+        <p class="status calling">Tentative d'appel...</p>
+        <p class="status call-canceled">Appel annulé</p>
+        <p class="status incoming-call">Appel entrant...</p>
+        <p class="status call-denied">Appel refusé</p>
+        <p class="status on-call">Appel en cours</p>
+        <p class="status call-ended">Fin d'appel</p>
+        <div class="users">
+          <div class="user">
+            <img src="https://i.pravatar.cc/150?img=3" alt="Photo de profil 1">
+            <div class="camera"></div>
+            <p>Pseudo 1</p>
+          </div>
+          <div class="user">
+            <img src="https://i.pravatar.cc/150?img=1" alt="Photo de profil 2">
+            <div class="camera"></div>
+            <p>Pseudo 2</p>
+          </div>
+        </div>
+        <div class="call-animation">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="screen-share">
+          <div class="screen-wrapper"><img class="screen" src="../../MatheoFontaine.github.io/image/bg1.png" alt=""></div>
+          <div class="screen-wrapper"><img class="screen" src="../../MatheoFontaine.github.io/image/bg1.png" alt=""></div>
+        </div>
+        <div class="actions">
+          <button id="call-mute" title="Désactiver le micro"><img src="./model/mic.svg" alt=""></button>
+          <button id="call-unmute" title="Activer le micro"><img src="./model/mic-off.svg" alt=""></button>
+          <button id="call-camera-off" title="Désactiver la caméra"><img src="./model/camera.svg" alt=""></button>
+          <button id="call-camera-on" title="Activer la caméra"><img src="./model/camera-off.svg" alt=""></button>
+          <button id="call-screen-share-on" title="Partager l'écran"><img src="./model/screen.svg" alt=""></button>
+          <button id="call-screen-share-off" title="Désactiver le partage d'écran"><img src="./model/screen-crossed.svg" alt=""></button>
+          <button id="call-join" title="Rejoindre l'appel"><img src="./model/phone-call.svg" alt=""></button>
+          <button id="call-end" title="Mettre fin à l'appel"><img src="./model/phone-call-end.svg" alt=""></button>
+          <button id="call-fullscreen-enter" title="Plein écran"><img src="./model/fullscreen.svg" alt=""></button>
+          <button id="call-fullscreen-exit" title="Quitté le mode plein écran"><img src="./model/fullscreen-off.svg" alt=""></button>
+        </div>
+      </div>
+      <header class="himself">
+        <img class="profile-pic" src="https://i.pravatar.cc/150?img=1" alt="Photo de profil">
+        <div class="info-wrapper">
+          <h2>Pseudo</h2>
+          <p>Inscrit le 24 Février 2023</p>
+        </div>
+        <div class="actions">
+          <button title="Démarrer un appel"><img src="./model/phone.svg" alt="Démarrer un appel"></button>
+          <button title="Démarrer un appel vidéo"><img src="./model/camera.svg" alt="Démarrer un appel vidéo"></button>
+        </div>
+        <div class="dropdown">
+          <button type="button">
+            <img src="./model/options.svg" alt="Bouton de menu dépliant">
+          </button>
+          <div class="dropdown-content">
+            <ul>
+              <li><a href="#"><img src="./model/mail-open.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+              <li><a href="#"><img src="./model/mail.svg" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+              <li><a href="#"><img src="./model/block.svg" alt="Rond barré"><span>Bloquer</span></a></li>
+              <li><a href="#"><img src="./model/flag.svg" alt="Drapeau"><span>Signaler</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="chat">
+          <ul>
+            <li>
+              <article class="message-card him">
+                <img src="https://i.pravatar.cc/150?img=1" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 1</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card">
+                <img src="https://i.pravatar.cc/150?img=3" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 3</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card him">
+                <img src="https://i.pravatar.cc/150?img=1" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 1</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card">
+                <img src="https://i.pravatar.cc/150?img=3" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 3</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card him">
+                <img src="https://i.pravatar.cc/150?img=1" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 1</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card">
+                <img src="https://i.pravatar.cc/150?img=3" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 3</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card him">
+                <img src="https://i.pravatar.cc/150?img=1" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 1</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>Lorem, ipsum.</p>
+                  </div>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="message-card">
+                <img src="https://i.pravatar.cc/150?img=3" alt="">
+                <div class="message-wrapper">
+                  <div class="info">
+                    <p class="pseudo">Pseudo 3</p>
+                    <div class="date">
+                      <img src="./model/clock.svg" alt="Horloge">
+                      <p>Hier</p>
+                    </div>
+                  </div>
+                  <div class="message">
+                    <p>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium minus autem quisquam expedita obcaecati iste delectus quis veritatis. Impedit reiciendis officiis illum optio quidem reprehenderit!
+                    </p>
+                  </div>
+                </div>
+              </article>
+            </li>
+          </ul>
+      </div>
+      <div class="new-message">
+        <div class="textarea-wrapper">
+          <textarea></textarea>
+          <span class="placeholder">Message...</span>
+          <div class="bar"></div>
+        </div>
+        <div class="button-wrapper">
+          <button title="Envoyer le message"><img src="./model/send.svg" alt="Envoyer le message"></button>
+        </div>
+      </div>
+      <!-- <p class="empty">Choisissez un utilisateur avec qui discuter...</p> -->
+    </section>
+  </main>
+  <footer>
+    <div>
+      <h2>Signalements</h2>
+      <ul>
+        <li><a href="#">Signaler un utilisateur</a></li>
+        <li><a href="#">Signaler un bug</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Liens utiles</h2>
+      <ul>
+        <li><a href="./model/cgu.html">Mentions légales</a></li>
+        <li><a href="./model/cgu.html">Politique de confidentialité</a></li>
+        <li><a href="./model/cgu.html">Conditions Générales d'Utilisation</a></li>
+        <li><a href="./model/cgu.html">Notes de mise à jour</a></li>
+        <li><a href="#">États des services</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Gestion</h2>
+      <ul>
+        <li><a href="#">Gérer les signalements d'utilisateur</a></li>
+        <li><a href="#">Gérer les signalements de bug</a></li>
+        <li><a href="#">Gérer les utilisateurs</a></li>
+        <li><a href="#">Gérer les bannissements</a></li>
+        <li><a href="#">Ajouter une note de mise à jour</a></li>
+      </ul>
+    </div>
+    <div class="copyright">Copyright © 2023 Sengolas</div>
+  </footer>
+
+  <script src="./model/script.js"></script>
+</body>
+</html>
