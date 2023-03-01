@@ -436,6 +436,7 @@ main>section:last-child p.empty {
     flex-direction: column-reverse;
     overflow-y: auto;
     height: 100%;
+    max-height: 500px;
     width: 100%;
     margin: 0;
 }
@@ -526,16 +527,18 @@ main>section:last-child p.empty {
     flex: 1;
     border-right: 1px solid rgba(0, 0, 0, .3);
     position: relative;
+    width: calc(100% - 50px);
 }
 
-.new-message textarea {
-    max-height: 250px;
-    width: 100%;
-    resize: none;
-    padding: 1em;
+.new-message .textarea {
+  display: block;
+  width: 100%;
+  min-height: 75px;
+  max-height: 250px;
+  padding: 1em;
+  overflow-y: auto;
+  line-height: 20px;
 }
-
-.new-message textarea::placeholder {color: #AAA;}
 
 .new-message .placeholder {
     position: absolute;
@@ -546,7 +549,7 @@ main>section:last-child p.empty {
     transition: top .2s ease, left .2s ease;
 }
 
-.new-message textarea.active + .placeholder {
+.new-message .textarea.active + .placeholder {
     top: -10px;
     left: 0;
     padding: .15em .3em;
@@ -562,7 +565,7 @@ main>section:last-child p.empty {
     transition: all .3s ease;
 }
 
-.new-message textarea.active ~ .bar {width: 100%;}
+.new-message .textarea.active ~ .bar {width: 100%;}
 
 .new-message .button-wrapper {
     width: 50px;
