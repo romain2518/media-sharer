@@ -8,7 +8,7 @@
 | pseudo | VARCHAR(30) | Index, not null | min: 3<br> max: 30<br> NotBlank |
 | email | VARCHAR(180) | Index, not null, unique | min: 3<br> max: 180<br> EmailType<br> Notblank<br> Unique |
 | roles | json | | |
-| password | string | | |
+| password | string | | min strength: 4 |
 | picture_path | VARCHAR(255) | Not null | Default `0.png` |
 | is_verified | boolean | Not null | Default `False` |
 | created_at | datetime | Not null | |
@@ -21,7 +21,7 @@
 | id | int | Primary key, unsigned, not null, auto_increment | |
 | conversation_id | ENTITY | Foreign key | |
 | user_id | ENTITY | Foreign key | |
-| message | VARCHAR(255) | Not null | min: 5<br> max: 255<br> Notblank |
+| message | VARCHAR(255) | Not null | min: 1<br> max: 255<br> Notblank |
 | created_at | datetime | Not null | |
 | updated_at | datetime | Null | |
 
@@ -40,7 +40,7 @@
 | id | int | Primary key, unsigned, not null, auto_increment | |
 | conversation_id | ENTITY | Foreign key | |
 | user_id | ENTITY | Foreign key | |
-| status | VARCHAR(10) | Not null | Choices |
+| isRead | boolean | Not null | Default false |
 | created_at | datetime | Not null | |
 | updated_at | datetime | Null | |
 
@@ -63,7 +63,7 @@
 |--|--|--|--|
 | id | int | Primary key, unsigned, not null, auto_increment | |
 | user_id | ENTITY | Foreign key | |
-| url | VARCHAR(255) | Not null | min: 12<br> max: 255<br> UrlType |
+| url | VARCHAR(255) | Not null | min: 3<br> max: 255<br> UrlType<br> Notblank |
 | comment | VARCHAR(255) | Not null | min: 5<br> max: 255<br> Notblank |
 | is_processed | boolean | Not null | Default False |
 | is_important | boolean | Not null | Default False |
@@ -76,7 +76,7 @@
 |--|--|--|--|
 | id | int | Primary key, unsigned, not null, auto_increment | |
 | user_id | ENTITY | Foreign key | |
-| email | VARCHAR(180) | Not null, unique | min: 3<br> max: 180<br> EmailType<br> Notblank<br> Unique |
+| email | VARCHAR(180) | Index, not null, unique | min: 3<br> max: 180<br> EmailType<br> Notblank<br> Unique |
 | comment | VARCHAR(255) | Null | max: 255 |
 | created_at | datetime | Not null | |
 | updated_at | datetime | Null | |
@@ -87,7 +87,7 @@
 |--|--|--|--|
 | id | int | Primary key, unsigned, not null, auto_increment | |
 | user_id | ENTITY | Foreign key | |
-| note | TEXT | Null | min: 5<br> max: 2000<br> Notblank |
+| note | TEXT | Not null | min: 5<br> max: 2000<br> Notblank |
 | created_at | datetime | Not null | |
 | updated_at | datetime | Null | |
 

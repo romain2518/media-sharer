@@ -4,7 +4,7 @@ BUG REPORT: code_report, url, comment, is_important, is_processed
 :
 :
 
-STATUS: code_status, status
+STATUS: code_status, is_read
 Sets, 11 STATUS, 0N USER
 Writes(1), 11 BUG REPORT, 0N USER
 Writes(2), 11 USER REPORT, 0N USER
