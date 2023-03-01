@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -15,21 +16,26 @@ class Conversation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, orphanRemoval: true)]
+    #[Groups('api_conversation_show')]
     private Collection $messages;
 
     #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Status::class, orphanRemoval: true)]
     private Collection $statuses;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'conversations')]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private Collection $users;
 
     public function __construct()

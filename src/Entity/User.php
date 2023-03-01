@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -25,6 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_list', 'api_user_show'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -39,6 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups('api_user_show')]
     private array $roles = [];
 
     /**
@@ -55,24 +58,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Le pseudo doit contenir au maximum {limit} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
+    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_list', 'api_user_show'])]
     private ?string $pseudo = null;
 
     #[Vich\UploadableField(mapping: 'user_pictures', fileNameProperty: 'picturePath')]
     #[Assert\File(
         maxSize: "5M",
         mimeTypes: ["image/jpeg", "image/png"],
-        maxSizeMessage: "The maximum allowed file size is 5MB.",
-        mimeTypesMessage: "Only .png, .jpg, .jpeg, .jfif, .pjpeg and .pjp are allowed."
+        maxSizeMessage: "Ce fichier est trop volumineux, la taille maximum est de {{ limit }} {{ suffix }}.",
+        mimeTypesMessage: "L'extension du fichier n'est pas acceptée, seules les extensions .png, .jpg, .jpeg, .jfif, .pjpeg et .pjp sont acceptées."
     )]
     private ?File $pictureFile = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_list', 'api_user_show'])]
     private ?string $picturePath = '0.png';
 
     #[ORM\Column]
     private ?bool $isVerified = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['api_conversation_list', 'api_user_list', 'api_user_show'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
