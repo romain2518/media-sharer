@@ -79,6 +79,10 @@ const handleWindowResize = function (event) {
     document.querySelectorAll('.list-container .list').forEach(element => {
         element.style.marginTop = '0';
     });
+
+    // Resize message list
+    document.querySelector('.new-message .textarea').dispatchEvent(new Event('input'));
+
 }
 
 const handleUserCardClick = function (event) {
@@ -169,6 +173,16 @@ const handleTextareaPlaceholderClick = function () {
     document.querySelector('.new-message .textarea').focus();
 }
 
+const handleButtonUpClick = function () {
+    window.scrollTo(0, 0);
+}
+
+const handleBodyScroll = function () {
+    document.querySelector('button.up').classList.add('active');
+        
+    if (window.scrollY === 0) document.querySelector('button.up').classList.remove('active');
+}
+
 window.addEventListener('click', handleWindowClick);
 
 document.querySelectorAll('.dropdown>button').forEach(element => {
@@ -194,3 +208,6 @@ document.querySelector('.new-message .textarea').addEventListener('focus', handl
 document.querySelector('.new-message .textarea').addEventListener('blur', handleTextareaBlur);
 
 document.querySelector('.new-message .placeholder').addEventListener('click', handleTextareaPlaceholderClick);
+
+document.querySelector('button.up').addEventListener('click', handleButtonUpClick);
+window.addEventListener('scroll', handleBodyScroll);
