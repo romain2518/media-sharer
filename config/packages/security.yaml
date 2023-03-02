@@ -26,8 +26,21 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        #? Front office
+
+        - { path: ^/modification, roles: ROLE_USER }
+        - { path: ^/suppression-du-compte, roles: ROLE_USER }
+
+        - { path: ^/utilisateurs-bloques, roles: ROLE_USER }
+
+        - { path: ^/signalement, roles: ROLE_USER }
+
+        #? Back office
+        - { path: ^/gestion, roles: ROLE_ADMIN }
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SUPERADMIN: ROLE_ADMIN
 
 when@test:
     security:
