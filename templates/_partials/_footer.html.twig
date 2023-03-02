@@ -9,9 +9,9 @@
     <div>
         <h2>Liens utiles</h2>
         <ul>
-            <li><a href="./model/cgu.html">Mentions légales</a></li>
-            <li><a href="./model/cgu.html">Politique de confidentialité</a></li>
-            <li><a href="./model/cgu.html">Conditions Générales d'Utilisation</a></li>
+            <li><a href="{{ path('app_main_legal-mentions') }}">Mentions légales</a></li>
+            <li><a href="{{ path('app_main_privacy-policy') }}">Politique de confidentialité</a></li>
+            <li><a href="{{ path('app_main_terms') }}">Conditions Générales d'Utilisation</a></li>
             <li><a href="./model/cgu.html">Notes de mise à jour</a></li>
             <li><a href="#">États des services</a></li>
         </ul>
@@ -26,6 +26,6 @@
             <li><a href="#">Ajouter une note de mise à jour</a></li>
         </ul>
     </div>
-    <div class="copyright">Copyright © 2023 Sengolas</div>
+    <div class="copyright">Copyright © {{ 'now' | date('Y') }} - Sengolas</div>
 </footer>
   
