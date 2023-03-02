@@ -39,7 +39,7 @@ class DownloadFakePicturesCommand extends Command
         ];
 
         foreach ($folders as $folder) {
-            $files = $finder->files()->in("public/assets/images/$folder");
+            $files = $finder->files()->name('*.jfif')->in("public/assets/images/$folder");
             $fileSystem->remove($files);
         }
 
