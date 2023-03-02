@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur {{ status_code }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/error.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <h2>{{ status_code }}</h2>
+    {% if status_code is same as(403) %}
+        <h3>Vous n'avez pas accès à cette page</h3>        
+    {% elseif status_code is same as(404) %}
+        <h3>Page introuvable</h3>
+    {% else  %}
+        <h3>Une erreur est survenue</h3>        
+    {% endif %}
+    
+    <div class="ghost">
+    <div class="body">
+        <div class="eye"></div>
+        <div class="eye"></div>
+        <div class="mouth"></div>
+    </div>
+    <div class="legs">
+        <div class="leg"></div>
+        <div class="leg"></div>
+        <div class="leg"></div>
+    </div>
+    <div class="shadow"></div>
+    </div>
+    <nav>
+        <button onclick="history.back()">RETOUR</button>
+        <a href="{{ path('app_main_home') }}">ACCUEIL</a>
+    </nav>
+</main>
+
+{% endblock %}

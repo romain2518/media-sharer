@@ -6,7 +6,7 @@
 |--|--|--|--|
 | /mentions-legales | GET | Main | legalMentions |
 | /politique-de-confidentialite | GET | Main | privacyPolicy |
-| /cgu | GET | Main | cgu |
+| /cgu | GET | Main | terms |
 | /etats-des-services | GET | Main | status |
 
 ## Espace membre
@@ -56,7 +56,7 @@
 
 | URL | Méthodes HTTP | Contrôleur | Méthode | Commentaire |
 |--|--|--|--|--|
-| / | - | Message | index | - |
+| / | - | Message | home | - |
 | - | - | Message | show | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
 | - | - | Message | new | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
 | - | - | Message | edit | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |

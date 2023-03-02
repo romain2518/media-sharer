@@ -803,7 +803,6 @@ button.up:focus-visible {outline: -webkit-focus-ring-color auto 1px;}
 
 button.up.active {display: block;}
 
-
 @media (width >= 1024px ) {
-    button.up {display: none;}
+    button.up.active {display: none;}
 }

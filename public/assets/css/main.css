@@ -1,0 +1,117 @@
+* {box-sizing: border-box;}
+
+body {
+    /* fallback for old browsers */
+    background: #fccb90;
+    
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1));
+    
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to bottom right, rgba(252, 203, 144, 1), rgba(213, 126, 235, 1));
+    
+    scroll-behavior: smooth;
+    
+    font-family: 'Rubik', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 1.2em;
+    margin: 5px;
+    font-style: italic;
+}
+
+body>main {
+    width: 100%;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+}
+
+@media (width >= 1024px ) {
+    body>main {
+        flex-direction: row;
+        height: 750px;
+    };
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1em auto;
+}
+
+/** Footer */
+
+footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    box-sizing: border-box;
+    margin-top: 1em;
+    border-radius: 15px 15px 0 0;
+    padding: 1em 2em;
+    width: 100%;
+
+    background-color: #282828;
+}
+
+footer .copyright {
+    margin-top: 1em;
+    width: 100%;
+    color: white;
+    text-align: center;
+}
+
+footer h2 {
+    color: white;
+}
+
+footer li a {
+    text-decoration: none;
+    color:  #ffbffb;
+}
+
+@media (width >= 1024px ) {
+    footer {flex-direction: row;}
+}
+
+/** Up button */
+
+button.up {
+    display: none;
+
+    width: 50px;
+    height: 50px;
+    border: 0;
+    padding: 0;
+    border-radius: 50%;
+    transform: rotate(-90deg);
+
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+
+    font-size: 2.5em;
+    text-align: center;
+    background-color: #606060;
+    cursor: pointer;
+}
+
+button.up:focus-visible {outline: -webkit-focus-ring-color auto 1px;}
+
+button.up.active {display: block;}
+
+@media (width >= 1024px ) {
+    button.up.active {display: none;}
+}
