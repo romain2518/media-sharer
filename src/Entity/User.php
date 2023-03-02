@@ -72,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_list', 'api_user_show'])]
-    private ?string $picturePath = '0.png';
+    private ?string $picturePath = '0.svg';
 
     #[ORM\Column]
     private ?bool $isVerified = false;
