@@ -1,0 +1,134 @@
+
+body>main {
+    max-width: 430px;
+    
+    border-radius: .75em;
+    background-color: white;
+    box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+}
+
+@media (width >= 1024px ) {
+    body>main {
+        flex-direction: column;
+        height: auto;
+    };
+}
+
+section {
+    padding: 1em;
+    position: relative;
+    color: #333;
+}
+
+section h2 {
+    position: relative;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+section h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 28px;
+    border-radius: 12px;
+    background: #4070f4;
+}
+
+section a {
+    color: #4070f4;
+    text-decoration: none;
+}
+
+section a:hover {text-decoration: underline;}
+
+section form {margin-top: 2em;}
+
+.input-wrapper {
+    height: 52px;
+    margin: 1.1em 0;
+}
+.input-wrapper input,
+.input-wrapper button {
+    height: 100%;
+    width: 100%;
+    padding: 0 1em;
+    font-size: 1.05em;
+    border: 1.5px solid #C7BEBE;
+    border-bottom-width: 2.5px;
+    border-radius: 6px;
+}
+
+.input-wrapper input:invalid {border-color: #f44040;}
+.input-wrapper input:valid {border-color: #4070f4;}
+.input-wrapper input:placeholder-shown {border-color: #C7BEBE;}
+
+.input-wrapper.image-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    height: inherit;
+    padding: 1em 0;
+    border: 1.5px solid #C7BEBE;
+    border-radius: 6px;
+}
+.image-input img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 1em;
+}
+
+.image-input input {display: none;}
+
+.image-input label {
+    background-color: #c5c5c5;
+    padding: .25em .75em;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.image-input label:hover,
+.image-input label:active,
+.image-input label:focus {background-color: #a5a5a5;}
+
+.info,
+.checkbox {
+    color: #707070;
+    font-size: .9em;
+}
+
+.info.error {color: red;}
+
+.info p {margin: 2em 0 .7em 0;}
+.info+.input-wrapper {margin-top: .7em;}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox label {
+    font-weight: bold;
+    margin-left: .7em;
+}
+
+.input-wrapper button {
+    color: #fff;
+    letter-spacing: 1px;
+    border: none;
+    background: #4070f4;
+    cursor: pointer;
+}
+
+.input-wrapper button:hover {background: #0e4bf1;}
+
+.text p {
+    width: 100%;
+    font-size: .9em;
+    font-weight: bold;
+    text-align: center;
+}
