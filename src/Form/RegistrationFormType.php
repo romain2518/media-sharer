@@ -34,14 +34,13 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Veuillez entrer un mot de passe.',
                     ]),
                     new Length([
-                        'min' => 8,
-                        'minMessage' => 'Votre mot de passe doit comporter au moions {{ limit }} caractères (ou au moins 13 caractères pour plus de sécurité).',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                     new NotCompromisedPassword,
                     new PasswordStrength([
                         'minStrength' => 4,
+                        'minLength' => 8,
                         // @see https://github.com/rollerworks/PasswordStrengthValidator/blob/main/docs/strength-validation.md
                     ])
                 ],
