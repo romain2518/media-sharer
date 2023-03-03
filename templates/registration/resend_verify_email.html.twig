@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification d'email{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Confirmation d'adresse mail</h2>
+        <div class="info">
+            <p>
+                Un email de confirmation vous a été envoyé.<br>
+                Pour finaliser votre inscription, veuillez cliquer sur le lien contenu dans l'email.
+            </p>
+        </div>
+        <form method="POST">
+            <div class="input-wrapper">
+                <button type="submit">Renvoyer l'email</button>
+            </div>
+        </form>
+    </section>
+</main>
+{% endblock %}

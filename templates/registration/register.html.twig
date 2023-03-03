@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Inscription</h2>
+
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="info error">
+                {{ flash_error }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(registrationForm) }}
+            {# Pseudo #}
+            {% if form_errors(registrationForm.pseudo) %}
+                <div class="info error">
+                    {{ form_errors(registrationForm.pseudo) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(registrationForm.pseudo, { 'attr': { 'placeholder': 'Pseudo' } }) }}
+            </div>
+
+            {# Email #}
+            {% if form_errors(registrationForm.email) %}
+                <div class="info error">
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(registrationForm.email, { 'attr': { 'placeholder': 'Adresse mail' } }) }}
+            </div>
+
+            {# Password #}
+            {% if form_errors(registrationForm.plainPassword.first) %}
+                <div class="info error">
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(registrationForm.plainPassword.first, { 'attr': { 'placeholder': 'Mot de passe' } }) }}
+            </div>
+
+            {# Password confirm #}
+            {% if form_errors(registrationForm.plainPassword.second) %}
+                <div class="info error">
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(registrationForm.plainPassword.second, { 'attr': { 'placeholder': 'Confirmation de mot de passe' } }) }}
+            </div>
+
+            {# Terms #}
+            {% if form_errors(registrationForm.agreeTerms) %}
+                <div class="info error">
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+            {% endif %}
+
+            <div class="checkbox info">
+                {{ form_widget(registrationForm.agreeTerms, { 'id': 'policy' }) }}
+                <label for="policy">J'ai lu et j'accepte les <a href="{{ path('app_main_terms') }}">Conditions Générales d'Utilisation</a></label>
+            </div>
+
+            <div class="input-wrapper">
+                <button type="submit">S'inscrire</button>
+            </div>
+            <div class="text">
+                <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+            </div>
+        {{ form_end(registrationForm) }}
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/register.js') }}"></script>
+{% endblock %}

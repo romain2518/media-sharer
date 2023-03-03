@@ -103,7 +103,10 @@ section form {margin-top: 2em;}
 
 .info.error {color: red;}
 
-.info p {margin: 2em 0 .7em 0;}
+.info {margin: 2em 0 .7em 0;}
+.info p,
+.info ul {margin: 0;}
+
 .info+.input-wrapper {margin-top: .7em;}
 
 .checkbox {
