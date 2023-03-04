@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande de réinitialisation de mot de passe{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Demande de réinitialisation de mot de passe</h2>
+        <div class="info">
+            <p>
+                Si un compte est associé à cette adresse mail existe, alors un email contenant un lien de réinitialisation vient de vous être envoyé.
+            </p>
+        </div>
+        <div class="info">
+            <p>
+                Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            </p>
+        </div>
+        <div class="info">
+            <p>
+                Si vous n'avez pas reçu d'email, pensez à vérifier vos spams ou <a href="{{ path('app_forgot_password_request') }}">réessayez</a>.</p>
+        </div>
+    </section>
+</main>
+{% endblock %}
