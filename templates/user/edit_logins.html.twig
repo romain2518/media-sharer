@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier ses identifiants{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Modifier ses identifiants</h2>
+
+        {% for flash_error in app.flashes('edit_logins_error') %}
+            <div class="info error">
+                {{ flash_error }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(form) }}
+            {# Email #}
+            {% if form_errors(form.email) %}
+                <div class="info error">
+                    {{ form_errors(form.email) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.email, { 'attr': { 'placeholder': 'Adresse mail' } }) }}
+            </div>
+
+            {# Current password #}
+            <div class="info">
+                <p>
+                    Si vous changez votre adresse mail, vous serez déconnecté et devrez confirmer la nouvelle adresse.
+                </p>
+            </div>
+
+            {% if form_errors(form.currentPassword) %}
+                <div class="info error">
+                    {{ form_errors(form.currentPassword) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.currentPassword, { 'attr': { 'placeholder': 'Mot de passe actuel' } }) }}
+            </div>
+            
+            {# New password #}
+            <div class="info">
+                <p>
+                    Veuillez remplir les champs "Nouveau mot de passe" et "Confirmation" seulement si vous souhaitez changer de mot de passe.
+                </p>
+            </div>
+
+            {% if form_errors(form.newPassword.first) %}
+                <div class="info error">
+                    {{ form_errors(form.newPassword.first) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.newPassword.first, { 'attr': { 'placeholder': 'Nouveau mot de passe' } }) }}
+            </div>
+
+            {# New password confirm #}
+            {% if form_errors(form.newPassword.second) %}
+                <div class="info error">
+                    {{ form_errors(form.newPassword.second) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.newPassword.second, { 'attr': { 'placeholder': 'Confirmation de mot de passe' } }) }}
+            </div>
+
+            <div class="input-wrapper">
+                <button type="submit">Modifier les identifiants</button>
+            </div>
+
+            <div class="text">
+                <p><a href="{{ path('app_main_home') }}">Annuler</a></p>
+            </div>
+        {{ form_end(form) }}
+    </section>
+</main>
+{% endblock %}
