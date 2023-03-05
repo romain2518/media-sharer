@@ -54,8 +54,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(
         min: 3,
         max: 30,
-        minMessage: 'Le pseudo doit contenir au moins {limit} caractères.',
-        maxMessage: 'Le pseudo doit contenir au maximum {limit} caractères.',
+        minMessage: 'Le pseudo doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le pseudo doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_list', 'api_user_show'])]
@@ -65,8 +65,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\File(
         maxSize: "5M",
         mimeTypes: ["image/jpeg", "image/png"],
-        maxSizeMessage: "Ce fichier est trop volumineux, la taille maximum est de {{ limit }} {{ suffix }}.",
-        mimeTypesMessage: "L'extension du fichier n'est pas acceptée, seules les extensions .png, .jpg, .jpeg, .jfif, .pjpeg et .pjp sont acceptées."
     )]
     private ?File $pictureFile = null;
 

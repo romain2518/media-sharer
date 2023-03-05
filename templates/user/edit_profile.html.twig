@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier son profil{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Modifier son profil</h2>
+
+        {{ form_start(form) }}
+            {# Profile picture #}
+            {% if form_errors(form.pictureFile) %}
+                <div class="info error">
+                    {{ form_errors(form.pictureFile) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper image-input">
+                {{ form_widget(form.pictureFile.file) }}
+                <img src="{{ vich_uploader_asset(user) }}" alt="Profile picture">
+                <label tabindex="0" for="{{ form.pictureFile.file.vars.id }}">Choisir un fichier</label>
+            </div>
+
+            {# Pseudo #}
+            {% if form_errors(form.pseudo) %}
+                <div class="info error">
+                    {{ form_errors(form.pseudo) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.pseudo, { 'attr': { 'placeholder': 'Pseudo' } }) }}
+            </div>
+
+            
+
+            <div class="input-wrapper">
+                <button type="submit">Modifier les identifiants</button>
+            </div>
+
+            <div class="text">
+                <p><a href="{{ path('app_main_home') }}">Annuler</a></p>
+            </div>
+        {{ form_end(form) }}
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/forms.js') }}"></script>
+{% endblock %}

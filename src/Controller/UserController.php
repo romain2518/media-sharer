@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\EditLoginsType;
+use App\Form\EditProfileType;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -74,6 +75,32 @@ class UserController extends AbstractController
 
         return $this->renderForm('user/edit_logins.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/modification-du-profil', name: 'app_user_edit-profile', methods: ['GET', 'POST'])]
+    public function editProfile(Request $request, UserInterface $user, EntityManagerInterface $entityManager): Response
+    {
+        /** @var User $user */
+
+        $form = $this->createForm(EditProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            // Setting file properties to null as user object is serialized and saved in the session (a File is not serializable)
+            $user->setPictureFile(null);
+
+            return $this->redirectToRoute('app_main_home', [], Response::HTTP_SEE_OTHER);
+        }
+
+        // Setting file properties to null as user object is serialized and saved in the session (a File is not serializable)
+        $user->setPictureFile(null);
+        
+        return $this->render('user/edit_profile.html.twig', [
+            'form' => $form,
+            'user' => $user,
         ]);
     }
 }

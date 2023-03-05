@@ -20,5 +20,6 @@
 ###< symfony/phpunit-bridge ###
 
 ###> Test pictures
-/public/assets/images/userPictures/*.jfif
+/public/assets/images/userPictures/*
+!/public/assets/images/userPictures/0.svg
 ###< Test pictures
