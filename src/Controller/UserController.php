@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\DeleteAccountType;
 use App\Form\EditLoginsType;
 use App\Form\EditProfileType;
 use App\Security\EmailVerifier;
@@ -101,6 +102,35 @@ class UserController extends AbstractController
         return $this->render('user/edit_profile.html.twig', [
             'form' => $form,
             'user' => $user,
+        ]);
+    }
+
+    #[Route('/suppression-du-compte', name: 'app_user_delete', methods: ['GET', 'POST'])]
+    public function delte(Request $request, UserInterface $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Security $security): Response
+    {
+        /** @var User $user */
+
+        $form = $this->createForm(DeleteAccountType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainTextPassword = $form->get('password')->getData();
+            if ($userPasswordHasher->isPasswordValid($user, $plainTextPassword)) {
+                $entityManager->remove($user);
+                $entityManager->flush();
+                
+                $security->logout(false);
+
+                $this->addFlash('delete_success', 'Compte supprimé avec succès');
+
+                return $this->redirectToRoute('app_main_home', [], Response::HTTP_SEE_OTHER);
+            }
+            
+            $this->addFlash('delete_error', 'Mot de passe incorrect');
+        }
+
+        return $this->renderForm('user/delete.html.twig', [
+            'form' => $form,
         ]);
     }
 }

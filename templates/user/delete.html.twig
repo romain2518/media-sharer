@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Supprimer le compte{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Supprimer le compte</h2>
+
+        {{ form_start(form) }}
+            {% for flash_error in app.flashes('delete_error') %}
+                <div class="info error">
+                    {{ flash_error }}
+                </div>
+            {% endfor %}
+
+            {# Password #}
+            {% if form_errors(form.password) %}
+                <div class="info error">
+                    {{ form_errors(form.password) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.password, { 'attr': { 'placeholder': 'Mot de passe' } }) }}
+            </div>
+
+            <div class="input-wrapper">
+                <button type="submit">Supprimer le compte</button>
+            </div>
+
+            <div class="text">
+                <p><a href="{{ path('app_main_home') }}">Annuler</a></p>
+            </div>
+        {{ form_end(form) }}
+    </section>
+</main>
+{% endblock %}
