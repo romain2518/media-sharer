@@ -31,6 +31,7 @@ class UserController extends AbstractController
         /** @var User $user */
 
         $currentEmail = $user->getEmail();
+        $loginsError = false;
 
         $form = $this->createForm(EditLoginsType::class, $user);
         $form->handleRequest($request);
@@ -72,11 +73,15 @@ class UserController extends AbstractController
             }
 
             $this->addFlash('edit_logins_error', 'Mot de passe incorrect');
+            $loginsError = true;
         }
 
-        return $this->renderForm('user/edit_logins.html.twig', [
-            'form' => $form,
-        ]);
+        return $this->render(
+            'user/edit_logins.html.twig', [
+                'form' => $form,
+            ],
+            $loginsError ? new Response('', Response::HTTP_UNPROCESSABLE_ENTITY) : null,
+        );
     }
 
     #[Route('/modification-du-profil', name: 'app_user_edit-profile', methods: ['GET', 'POST'])]
@@ -106,9 +111,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/suppression-du-compte', name: 'app_user_delete', methods: ['GET', 'POST'])]
-    public function delte(Request $request, UserInterface $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Security $security): Response
+    public function delete(Request $request, UserInterface $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Security $security): Response
     {
         /** @var User $user */
+
+        $loginsError = false;
 
         $form = $this->createForm(DeleteAccountType::class);
         $form->handleRequest($request);
@@ -123,14 +130,18 @@ class UserController extends AbstractController
 
                 $this->addFlash('delete_success', 'Compte supprimé avec succès');
 
-                return $this->redirectToRoute('app_main_home', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_register', [], Response::HTTP_SEE_OTHER);
             }
             
             $this->addFlash('delete_error', 'Mot de passe incorrect');
+            $loginsError = true;
         }
 
-        return $this->renderForm('user/delete.html.twig', [
-            'form' => $form,
-        ]);
+        return $this->render(
+            'user/delete.html.twig', [
+                'form' => $form,
+            ],
+            $loginsError ? new Response('', Response::HTTP_UNPROCESSABLE_ENTITY) : null,
+        );
     }
 }
