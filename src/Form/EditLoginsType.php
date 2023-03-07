@@ -18,7 +18,9 @@ class EditLoginsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
+            ->add('email', options: [
+                'empty_data' => '',
+            ])
             ->add('currentPassword', PasswordType::class, [
                 'constraints' => [
                     new NotBlank([

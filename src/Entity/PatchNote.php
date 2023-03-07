@@ -20,8 +20,8 @@ class PatchNote
     #[Assert\Length(
         min: 5,
         max: 2000,
-        minMessage: 'La note doit contenir au moins {limit} caractères.',
-        maxMessage: 'La note doit contenir au maximum {limit} caractères.',
+        minMessage: 'La note doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'La note doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     private ?string $note = null;

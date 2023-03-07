@@ -24,8 +24,8 @@ class Ban
     #[Assert\Length(
         min: 3,
         max: 180,
-        minMessage: 'L\'adresse email doit contenir au moins {limit} caractères.',
-        maxMessage: 'L\'adresse email doit contenir au maximum {limit} caractères.',
+        minMessage: 'L\'adresse email doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'L\'adresse email doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     private ?string $email = null;
@@ -33,7 +33,7 @@ class Ban
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
         max: 255,
-        maxMessage: 'Le commentaire doit contenir au maximum {limit} caractères.',
+        maxMessage: 'Le commentaire doit contenir au maximum {{ limit }} caractères.',
     )]
     private ?string $comment = null;
 

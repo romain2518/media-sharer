@@ -22,8 +22,8 @@ class Message
     #[Assert\Length(
         min: 1,
         max: 255,
-        minMessage: 'Le message doit contenir au moins {limit} caractère.',
-        maxMessage: 'Le message doit contenir au maximum {limit} caractères.',
+        minMessage: 'Le message doit contenir au moins {{ limit }} caractère.',
+        maxMessage: 'Le message doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     #[Groups('api_conversation_show')]

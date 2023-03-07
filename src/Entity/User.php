@@ -34,8 +34,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(
         min: 3,
         max: 180,
-        minMessage: 'L\'adresse email doit contenir au moins {limit} caractères.',
-        maxMessage: 'L\'adresse email doit contenir au maximum {limit} caractères.',
+        minMessage: 'L\'adresse email doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'L\'adresse email doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     private ?string $email = null;

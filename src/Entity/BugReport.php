@@ -21,8 +21,8 @@ class BugReport
     #[Assert\Length(
         min: 3,
         max: 255,
-        minMessage: 'L\'URL doit contenir au moins {limit} caractères.',
-        maxMessage: 'L\'URL doit contenir au maximum {limit} caractères.',
+        minMessage: 'L\'URL doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'L\'URL doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     private ?string $url = null;
@@ -31,8 +31,8 @@ class BugReport
     #[Assert\Length(
         min: 5,
         max: 255,
-        minMessage: 'Le commentaire doit contenir au moins {limit} caractères.',
-        maxMessage: 'Le commentaire doit contenir au maximum {limit} caractères.',
+        minMessage: 'Le commentaire doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le commentaire doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
     private ?string $comment = null;
