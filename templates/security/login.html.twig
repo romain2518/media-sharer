@@ -11,12 +11,6 @@
     <section>
         <h2>Connexion</h2>
         <form method="POST">
-            {% for flash_success in app.flashes('delete_success') %}
-                <div class="info error">
-                    {{ flash_success }}
-                </div>
-            {% endfor %}
-
             {% if error %}
                 <div class="info error">
                     <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>

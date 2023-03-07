@@ -19,6 +19,12 @@
 
         {{ form_start(form) }}
             {# Email #}
+            <div class="info">
+                <p>
+                    Si vous changez votre adresse mail, vous serez déconnecté et devrez confirmer la nouvelle adresse.
+                </p>
+            </div>
+            
             {% if form_errors(form.email) %}
                 <div class="info error">
                     {{ form_errors(form.email) }}
@@ -30,12 +36,6 @@
             </div>
 
             {# Current password #}
-            <div class="info">
-                <p>
-                    Si vous changez votre adresse mail, vous serez déconnecté et devrez confirmer la nouvelle adresse.
-                </p>
-            </div>
-
             {% if form_errors(form.currentPassword) %}
                 <div class="info error">
                     {{ form_errors(form.currentPassword) }}
@@ -60,7 +60,7 @@
             {% endif %}
 
             <div class="input-wrapper">
-                {{ form_widget(form.newPassword.first, { 'attr': { 'placeholder': 'Nouveau mot de passe' } }) }}
+                {{ form_widget(form.newPassword.first, { 'attr': { 'placeholder': 'Nouveau mot de passe', 'class': 'needSameCheck' } }) }}
             </div>
 
             {# New password confirm #}
@@ -71,7 +71,7 @@
             {% endif %}
 
             <div class="input-wrapper">
-                {{ form_widget(form.newPassword.second, { 'attr': { 'placeholder': 'Confirmation de mot de passe' } }) }}
+                {{ form_widget(form.newPassword.second, { 'attr': { 'placeholder': 'Confirmation de mot de passe', 'class': 'needSameCheck' } }) }}
             </div>
 
             <div class="input-wrapper">
@@ -84,4 +84,8 @@
         {{ form_end(form) }}
     </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/checkSamePassword.js') }}"></script>
 {% endblock %}

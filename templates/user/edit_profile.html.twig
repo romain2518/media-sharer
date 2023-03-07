@@ -21,7 +21,7 @@
 
             <div class="input-wrapper image-input">
                 {{ form_widget(form.pictureFile.file) }}
-                <img src="{{ vich_uploader_asset(user) }}" alt="Profile picture">
+                <img src="{{ user.picturePath ? vich_uploader_asset(user) : asset('assets/images/userPictures/0.svg') }}" alt="Profile picture">
                 <label tabindex="0" for="{{ form.pictureFile.file.vars.id }}">Choisir un fichier</label>
             </div>
 
@@ -39,7 +39,7 @@
             
 
             <div class="input-wrapper">
-                <button type="submit">Modifier les identifiants</button>
+                <button type="submit">Modifier le profil</button>
             </div>
 
             <div class="text">
@@ -51,5 +51,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ asset('assets/js/forms.js') }}"></script>
+    <script src="{{ asset('assets/js/imageInputDisplayer.js') }}"></script>
 {% endblock %}

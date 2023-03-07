@@ -10,6 +10,11 @@
 <main>
     <section>
         <h2>Inscription</h2>
+        {% for flash_success in app.flashes('delete_success') %}
+                <div class="info error">
+                    {{ flash_success }}
+                </div>
+            {% endfor %}
 
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="info error">
@@ -48,7 +53,7 @@
             {% endif %}
 
             <div class="input-wrapper">
-                {{ form_widget(registrationForm.plainPassword.first, { 'attr': { 'placeholder': 'Mot de passe' } }) }}
+                {{ form_widget(registrationForm.plainPassword.first, { 'attr': { 'placeholder': 'Mot de passe', 'class': 'needSameCheck' } }) }}
             </div>
 
             {# Password confirm #}
@@ -59,7 +64,7 @@
             {% endif %}
 
             <div class="input-wrapper">
-                {{ form_widget(registrationForm.plainPassword.second, { 'attr': { 'placeholder': 'Confirmation de mot de passe' } }) }}
+                {{ form_widget(registrationForm.plainPassword.second, { 'attr': { 'placeholder': 'Confirmation de mot de passe', 'class': 'needSameCheck' } }) }}
             </div>
 
             {# Terms #}
@@ -87,5 +92,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ asset('assets/js/register.js') }}"></script>
+    <script src="{{ asset('assets/js/checkSamePassword.js') }}"></script>
 {% endblock %}

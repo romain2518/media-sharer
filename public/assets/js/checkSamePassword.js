@@ -1,5 +1,5 @@
 const handleFormSubmit = function (event) {
-    [password1Elm, password2Elm] = event.currentTarget.querySelectorAll('input[type=password]');
+    [password1Elm, password2Elm] = event.currentTarget.querySelectorAll('input[type=password].needSameCheck');
 
     if (password1Elm.value === password2Elm.value) return;
 
@@ -13,7 +13,8 @@ const handleFormSubmit = function (event) {
     const pElm = document.createElement('p');
     pElm.textContent = 'Les mots de passes sont différents.';
 
-    if (password1Elm.parentNode.previousElementSibling.classList.contains('info')) {
+    if (password1Elm.parentNode.previousElementSibling
+        && password1Elm.parentNode.previousElementSibling.classList.contains('error')) {
         password1Elm.parentNode.previousElementSibling.appendChild(pElm);
     } else {
         const errorElm = document.createElement('div');
@@ -24,5 +25,5 @@ const handleFormSubmit = function (event) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelector('form[name=registration_form]').addEventListener('submit', handleFormSubmit);
+    document.querySelector('form').addEventListener('submit', handleFormSubmit);
 })
