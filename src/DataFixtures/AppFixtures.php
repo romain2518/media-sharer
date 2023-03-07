@@ -44,7 +44,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user
             ->setPseudo('Admin')
-            ->setEmail($faker->unique()->freeEmail())
+            ->setEmail('used@mail.com')
             ->setRoles(['ROLE_ADMIN'])
             ->setPassword($this->hasher->hashPassword($user, "J'ai 19 ans."))
             ->setPicturePath('2.jfif')

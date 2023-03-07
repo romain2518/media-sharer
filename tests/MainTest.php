@@ -2,14 +2,27 @@
 
 namespace App\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Repository\UserRepository;
 
-class MainTest extends WebTestCase
+class MainTest extends WebTestCaseMessageBeautifier
 {
-    public function testHome(): void
+    public function testHomeAnonymously(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', '/');
+
+        $this->assertResponseRedirects('/connexion');
+    }
+
+    public function testHomeLoggedIn(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findBy([], null, 1)[0];
+        $client->loginUser($user);
+
+        $client->request('GET', '/');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Media sharer');
@@ -18,7 +31,7 @@ class MainTest extends WebTestCase
     public function testLegalMentions(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/mentions-legales');
+        $client->request('GET', '/mentions-legales');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('section:last-child h2', 'Mentions légales');
@@ -27,7 +40,7 @@ class MainTest extends WebTestCase
     public function testPrivacyPolicy(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/politique-de-confidentialite');
+        $client->request('GET', '/politique-de-confidentialite');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('section:last-child h2', 'Politique de confidentialité');
@@ -36,7 +49,7 @@ class MainTest extends WebTestCase
     public function testTerms(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/cgu');
+        $client->request('GET', '/cgu');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('section:last-child h2', 'Conditions Générales d\'Utilisation');
