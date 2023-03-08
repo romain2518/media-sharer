@@ -5,6 +5,7 @@ namespace App\Tests;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserTest extends WebTestCaseMessageBeautifier
@@ -119,6 +120,110 @@ class UserTest extends WebTestCaseMessageBeautifier
         $this->assertResponseRedirects('/inscription');
         $client->followRedirect();
         $this->assertResponseIsSuccessful();
+    }
+
+    public function testGetBlockedUsers(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findBy([], null, 1)[0];
+
+        $client->loginUser($user);
+
+        $client->request('GET', '/utilisateurs-bloques');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+    }
+
+    public function testBlockSelf(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        
+        $user = $userRepository->findBy([], null, 1)[0];
+        $client->loginUser($user);
+        
+        //? Getting CSRF Tokens
+        $crawler = $client->request('GET', '/');
+        $blockToken = $crawler->filter('input[name=block_user_token]')->extract(['value'])[0];
+        $unblockToken = $crawler->filter('input[name=unblock_user_token]')->extract(['value'])[0];
+
+        //? Blocking self test
+        $client->request('POST', '/utilisateurs-bloques/' . $user->getId() . '/ajout', ['token' => $blockToken]);
+        
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        
+        //? Unblocking self test
+        $client->request('POST', '/utilisateurs-bloques/' . $user->getId() . '/suppression', ['token' => $unblockToken]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+    }
+
+    public function testBlockUser(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findBy([], null, 1)[0];
+        $client->loginUser($user);
+        
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/');
+        $blockToken = $crawler->filter('input[name=block_user_token]')->extract(['value'])[0];
+
+        //? Bad token test
+        $client->request('POST', '/utilisateurs-bloques/' . $user->getId()+1 . '/ajout', ['token' => 'Not a valid token']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Block test
+        $client->request('POST', '/utilisateurs-bloques/' . $user->getId()+1 . '/ajout', ['token' => $blockToken]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        $blockRequestContent = $client->getResponse()->getContent();
+
+        $client->request('GET', '/utilisateurs-bloques');
+
+        $this->assertStringContainsString($blockRequestContent, $client->getResponse()->getContent());
+    }
+
+    public function testUnblockUser(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $user = $userRepository->findBy([], null, 1)[0];        
+        $client->loginUser($user);
+        
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/');
+        $unblockToken = $crawler->filter('input[name=unblock_user_token]')->extract(['value'])[0];
+
+        //? Bad token test
+        $client->request('POST', '/utilisateurs-bloques/' . $user->getId()+1 . '/suppression', ['token' => 'Not a valid token']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Unblock test
+        $client->request('POST', '/utilisateurs-bloques/' . $user->getId()+1 . '/suppression', ['token' => $unblockToken]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_PARTIAL_CONTENT);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        $unblockRequestContent = $client->getResponse()->getContent();
+
+        $client->request('POST', '/utilisateurs-bloques');
+
+        $this->assertStringNotContainsString($unblockRequestContent, $client->getResponse()->getContent());
     }
 
     public function getLoginsDatas(): array

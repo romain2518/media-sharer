@@ -6,4 +6,6 @@
 
     <h1>Hello ! ✅</h1>
     
+    <input type="hidden" name="block_user_token" value="{{ csrf_token('block user') }}">
+    <input type="hidden" name="unblock_user_token" value="{{ csrf_token('unblock user') }}">
 {% endblock %}

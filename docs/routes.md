@@ -24,9 +24,9 @@
 | /reinitialisation-mdp/check-email | GET/POST | ResetPassword | checkEmail |
 | /reinitialisation-mdp/reset | GET/POST | ResetPassword | reset |
 | /suppression-du-compte | POST | User | delete |
-| /utlisateurs-bloques | GET | Block | index |
-| /utlisateurs-bloques/ajout | POST | Block | new |
-| /utlisateurs-bloques/{id}/suppression | POST | Block | remove |
+| /utilisateurs-bloques | GET | User | listBlocked |
+| /utilisateurs-bloques/{id}/ajout | POST | User | block |
+| /utilisateurs-bloques/{id}/suppression | POST | User | unblock |
 
 ## Espace administrateur
 

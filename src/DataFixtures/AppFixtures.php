@@ -68,6 +68,12 @@ class AppFixtures extends Fixture
             $manager->persist($user);
         }
 
+        //! Blocked user
+        foreach ($users as $user) {
+            foreach (array_rand($users, random_int(2, 3)) as $index) {
+                $user->addBlockedUser($users[$index]);
+            }
+        }
 
         //! Ban
         for ($i=0; $i < 20; $i++) { 

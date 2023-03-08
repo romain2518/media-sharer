@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
@@ -142,6 +143,61 @@ class UserController extends AbstractController
                 'form' => $form,
             ],
             $loginsError ? new Response('', Response::HTTP_UNPROCESSABLE_ENTITY) : null,
+        );
+    }
+
+    #[Route('/utilisateurs-bloques', name: 'app_user_blocked-list', methods: ['GET'], defaults: ['_format' => 'json'])]
+    public function listBlocked(UserInterface $user): JsonResponse
+    {
+        /** @var User $user */
+        return $this->json(
+            $user->getBlockedUsers(),
+            Response::HTTP_OK,
+            [],
+            [
+                'groups' => [
+                    'api_user_light'
+                ]
+            ]
+        );
+    }
+
+    #[Route('/utilisateurs-bloques/{id}/{action}', name: 'app_user_block', requirements: ['action' => '^(ajout)|(suppression)$'], methods: ['POST'], defaults: ['_format' => 'json'])]
+    public function block(Request $request, User $targetedUser, string $action, UserInterface $user, EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $user */
+
+        if ($targetedUser === $user) {
+            return $this->json(
+                sprintf('Vous ne pouvez pas vous %s vous même.', $action === 'ajout' ? 'bloquer' : 'débloquer'),
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        //? Checking CSRF Token
+        $token = $request->request->get('token');
+        $isValidToken = $this->isCsrfTokenValid(sprintf('%s user', $action === 'ajout' ? 'block' : 'unblock'), $token);
+        if (!$isValidToken) {
+            return $this->json('Jeton invalide', Response::HTTP_FORBIDDEN);
+        }
+
+        if ($action === 'ajout') {
+            $user->addBlockedUser($targetedUser);
+        } else {
+            $user->removeBlockedUser($targetedUser);
+        }
+
+        $entityManager->flush();
+
+        return $this->json(
+            $targetedUser,
+            $action === 'ajout' ? Response::HTTP_CREATED : Response::HTTP_PARTIAL_CONTENT,
+            [],
+            [
+                'groups' => [
+                    'api_user_light'
+                ]
+            ]
         );
     }
 }
