@@ -1,4 +1,3 @@
-
 body>main {
     max-width: 430px;
     
@@ -51,6 +50,8 @@ section form {margin-top: 2em;}
     margin: 1.1em 0;
 }
 .input-wrapper input,
+.input-wrapper select,
+.input-wrapper textarea,
 .input-wrapper button {
     height: 100%;
     width: 100%;
@@ -59,6 +60,14 @@ section form {margin-top: 2em;}
     border: 1.5px solid #C7BEBE;
     border-bottom-width: 2.5px;
     border-radius: 6px;
+}
+
+.input-wrapper.has-textarea {height: auto;}
+
+.input-wrapper textarea {
+    resize: vertical;
+    padding: .5em 1em;
+    height: 75px;
 }
 
 .input-wrapper input:invalid {border-color: #f44040;}

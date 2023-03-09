@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserReportRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserReportRepository::class)]
@@ -14,6 +15,7 @@ class UserReport
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('api_user-report')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -24,26 +26,33 @@ class UserReport
         maxMessage: 'Le commentaire doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
+    #[Groups('api_user-report')]
     private ?string $comment = null;
 
     #[ORM\Column]
+    #[Groups('api_user-report')]
     private ?bool $isProcessed = false;
 
     #[ORM\Column]
+    #[Groups('api_user-report')]
     private ?bool $isImportant = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('api_user-report')]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups('api_user-report')]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userReports')]
+    #[ORM\ManyToOne(inversedBy: 'userReports', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('api_user-report')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'relatedUserReports')]
+    #[ORM\ManyToOne(inversedBy: 'relatedUserReports', fetch: 'EAGER')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('api_user-report')]
     private ?User $reportedUser = null;
 
     public function getId(): ?int
