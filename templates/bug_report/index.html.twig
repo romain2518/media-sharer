@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des signalements de bug{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/managementList.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Liste des signalements de bug</h2>
+        {% for bug_report in bug_reports %}
+            <article>
+                <div class="infos">
+                    <h3>Signalement de <span>{{ bug_report.user.pseudo }}</span> concernant <span><a href="{{ bug_report.url }}">{{ bug_report.url }}</a></span></h3>
+                    <div class="date">
+                        <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                        <p>Le {{ bug_report.createdAt ? bug_report.createdAt|format_datetime(locale='fr', pattern='EEEE dd MMMM YYYY à HH:mm') : '' }}</p>
+                    </div>
+                    <p>{{ bug_report.comment }}</p>
+                </div>
+                <div class="options-wrapper">
+                    <div class="states">
+                        <div>
+                            <label for="checkbox_processed{{ bug_report.id }}">
+                                <input 
+                                    type="checkbox" 
+                                    id="checkbox_processed{{ bug_report.id }}" 
+                                    data-action="traite"
+                                    data-id="{{ bug_report.id }}"
+                                    data-token="{{ csrf_token('mark as' ~ bug_report.id) }}"
+                                    {{ bug_report.isProcessed ? 'checked' : '' }}
+                                    >
+                                <div></div>
+                                <img src="{{ asset('assets/images/icons/cross.svg') }}" alt="Non">
+                                <img src="{{ asset('assets/images/icons/check.svg') }}" alt="Oui">
+                                <p>Traité</p>
+                            </label>
+                        </div>
+                        <div>
+                            <label for="checkbox_important{{ bug_report.id }}">
+                                <input 
+                                    type="checkbox" 
+                                    id="checkbox_important{{ bug_report.id }}" 
+                                    data-action="important"
+                                    data-id="{{ bug_report.id }}"
+                                    data-token="{{ csrf_token('mark as' ~ bug_report.id) }}"
+                                    {{ bug_report.isImportant ? 'checked' : '' }}
+                                    >
+                                <div></div>
+                                <img src="{{ asset('assets/images/icons/cross.svg') }}" alt="Non">
+                                <img src="{{ asset('assets/images/icons/check.svg') }}" alt="Oui">
+                                <p>Important</p>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <form method="post" action="{{ path('app_bug-report_delete', {'id': bug_report.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ bug_report.id) }}">
+                            <button class="btn">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        {% else %}
+            <p class="empty">Aucun signalement trouvé</p>
+        {% endfor %}
+        
+        {% if bug_reports %}
+            <div class="pagination">
+                <a href="{{ path('app_bug-report_index', {limit: limit, offset: previousOffset}) }}">Précédent</a>
+                <a href="{{ path('app_bug-report_index', {limit: limit, offset: nextOffset}) }}">Suivant</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+
+<script>
+    const BASE_URL = '/gestion/signalement/bug';
+</script>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/managementList.js') }}"></script>
+{% endblock %}

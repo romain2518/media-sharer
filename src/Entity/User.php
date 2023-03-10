@@ -26,7 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_light', 'api_user_detailed', 'api_user-report'])]
+    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_light', 'api_user_detailed', 'api_user-report', 'api_bug-report'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -58,7 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Le pseudo doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
-    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_light', 'api_user_detailed', 'api_user-report'])]
+    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_light', 'api_user_detailed', 'api_user-report', 'api_bug-report'])]
     private ?string $pseudo = null;
 
     #[Vich\UploadableField(mapping: 'user_pictures', fileNameProperty: 'picturePath')]
@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?File $pictureFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_light', 'api_user_detailed', 'api_user-report'])]
+    #[Groups(['api_conversation_list', 'api_conversation_show', 'api_user_light', 'api_user_detailed', 'api_user-report', 'api_bug-report'])]
     private ?string $picturePath = null;
 
     #[ORM\Column]

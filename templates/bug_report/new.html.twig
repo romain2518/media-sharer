@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Signaler un bug{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Create Signaler un bug</h2>
+
+        {{ form_start(form) }}
+            {# URL #}
+            <div class="info">
+                <p>Si le bug n'est pas lié à une page précise, laissez l'URL de la page d'accueil (url par défaut)</p>
+            </div>
+            {% if form_errors(form.url) %}
+                <div class="info error">
+                    {{ form_errors(form.url) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.url, { 'attr': { 'placeholder': 'URL de la page contenant le bug' }, 'value': url('app_main_home') }) }}
+            </div>
+
+            {# Comment #}
+            {% if form_errors(form.comment) %}
+                <div class="info error">
+                    {{ form_errors(form.comment) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper has-textarea">
+                {{ form_widget(form.comment, { 'attr': { 'placeholder': 'Commentaire' } }) }}
+            </div>
+
+            <div class="input-wrapper">
+                <button type="submit">Soumettre le signalement</button>
+            </div>
+
+            <div class="text">
+                <p><a href="{{ path('app_main_home') }}">Annuler</a></p>
+            </div>
+        {{ form_end(form) }}
+    </section>
+</main>
+{% endblock %}

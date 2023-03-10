@@ -3,7 +3,7 @@
         <h2>Signalements</h2>
         <ul>
             <li><a href="{{ path('app_user-report_new') }}">Signaler un utilisateur</a></li>
-            <li><a href="#">Signaler un bug</a></li>
+            <li><a href="{{ path('app_bug-report_new') }}">Signaler un bug</a></li>
         </ul>
     </div>
     <div>
@@ -21,7 +21,7 @@
             <h2>Gestion</h2>
             <ul>
                 <li><a href="{{ path('app_user-report_index') }}">Gérer les signalements d'utilisateur</a></li>
-                <li><a href="#">Gérer les signalements de bug</a></li>
+                <li><a href="{{ path('app_bug-report_index') }}">Gérer les signalements de bug</a></li>
                 <li><a href="#">Gérer les utilisateurs</a></li>
                 <li><a href="#">Gérer les bannissements</a></li>
                 <li><a href="#">Ajouter une note de mise à jour</a></li>
