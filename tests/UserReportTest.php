@@ -28,7 +28,7 @@ class UserReportTest extends WebTestCaseMessageBeautifier
         $client->loginUser($adminUser);
         $client->request('GET', '/gestion/signalement/utilisateur');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h2', 'Liste des signalements d\'utilisateurs');
+        $this->assertSelectorTextContains('h2', 'Liste des signalements d\'utilisateur');
     }
 
     /**

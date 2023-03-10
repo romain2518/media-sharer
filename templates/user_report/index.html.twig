@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des signalements d'utilisateurs{% endblock %}
+{% block title %}Liste des signalements d'utilisateur{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('assets/css/managementList.css') }}">
@@ -9,7 +9,7 @@
 {% block body %}
 <main>
     <section>
-        <h2>Liste des signalements d'utilisateurs</h2>
+        <h2>Liste des signalements d'utilisateur</h2>
         {% for user_report in user_reports %}
             <article>
                 <div class="infos">
