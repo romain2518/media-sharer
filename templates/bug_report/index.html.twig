@@ -58,7 +58,7 @@
                     <div class="actions">
                         <form method="post" action="{{ path('app_bug-report_delete', {'id': bug_report.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?');">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ bug_report.id) }}">
-                            <button class="btn">Supprimer</button>
+                            <button>Supprimer</button>
                         </form>
                     </div>
                 </div>

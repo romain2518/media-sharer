@@ -39,7 +39,7 @@ class BugReportController extends AbstractController
             return $this->redirectToRoute('app_main_home', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('bug_report/new.html.twig', [
+        return $this->render('bug_report/new.html.twig', [
             'form' => $form,
         ]);
     }
