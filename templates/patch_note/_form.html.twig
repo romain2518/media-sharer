@@ -1,0 +1,31 @@
+{{ form_start(form) }}
+    {# Title #}
+    {% if form_errors(form.title) %}
+        <div class="info error">
+            {{ form_errors(form.title) }}
+        </div>
+    {% endif %}
+
+    <div class="input-wrapper">
+        {{ form_widget(form.title, { 'attr': { 'placeholder': 'Titre' } }) }}
+    </div>
+    
+    {# Note #}
+    {% if form_errors(form.note) %}
+        <div class="info error">
+            {{ form_errors(form.note) }}
+        </div>
+    {% endif %}
+
+    <div class="input-wrapper has-textarea">
+        {{ form_widget(form.note, { 'attr': { 'placeholder': 'Note' } }) }}
+    </div>
+
+    <div class="input-wrapper">
+        <button type="submit">{{ button_label }}</button>
+    </div>
+
+    <div class="text">
+        <p><a href="{{ path('app_main_home') }}">Annuler</a></p>
+    </div>
+{{ form_end(form) }}

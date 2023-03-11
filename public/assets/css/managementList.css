@@ -142,8 +142,7 @@ article h3 span:last-child {color: #c20000;}
     margin: auto;
 }
 
-.actions form button,
-.pagination a {
+.actions form button {
     width: fit-content;
     padding: .5em;
     border-radius: 6px;
@@ -157,18 +156,8 @@ article h3 span:last-child {color: #c20000;}
 
 .actions form button:hover,
 .actions form button:active,
-.actions form button:focus,
-.pagination a:hover,
-.pagination a:active,
-.pagination a:focus {
+.actions form button:focus {
     background-color: #003de4;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 1em;
-    gap: 1em;
 }
 
 @media (width >= 1024px ) {

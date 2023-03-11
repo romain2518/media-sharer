@@ -12,7 +12,7 @@
             <li><a href="{{ path('app_main_legal-mentions') }}">Mentions légales</a></li>
             <li><a href="{{ path('app_main_privacy-policy') }}">Politique de confidentialité</a></li>
             <li><a href="{{ path('app_main_terms') }}">Conditions Générales d'Utilisation</a></li>
-            <li><a href="./model/cgu.html">Notes de mise à jour</a></li>
+            <li><a href="{{ path('app_patch-note_index') }}">Notes de mise à jour</a></li>
             <li><a href="#">États des services</a></li>
         </ul>
     </div>
@@ -24,7 +24,7 @@
                 <li><a href="{{ path('app_bug-report_index') }}">Gérer les signalements de bug</a></li>
                 <li><a href="#">Gérer les utilisateurs</a></li>
                 <li><a href="#">Gérer les bannissements</a></li>
-                <li><a href="#">Ajouter une note de mise à jour</a></li>
+                <li><a href="{{ path('app_patch-note_new') }}">Ajouter une note de mise à jour</a></li>
             </ul>
         </div>
     {% endif %}

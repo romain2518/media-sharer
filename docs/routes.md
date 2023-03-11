@@ -34,7 +34,7 @@
 |--|--|--|--|--|
 | /signalement/utilisateur | GET/POST | UserReport | new | |
 | /signalement/bug | GET/POST | BugReport | new | |
-| /notes-de-maj | GET | PatchNote | index | |
+| /notes-de-maj/{limit}/{offset} | GET | PatchNote | index | |
 | /gestion/signalement/utilisateur/{limit}/{offset} | GET | UserReport | index | |
 | /gestion/signalement/utilisateur/{id}/mark-as-{processed\|unprocessed\|important\|not-important} | POST | UserReport | markAs | |
 | /gestion/signalement/utilisateur/{id}/suppression | POST | UserReport | delete | |

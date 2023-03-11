@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la note de mise à jour{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Modifier la note de mise à jour</h2>
+
+        {{ include('patch_note/_form.html.twig', {'button_label': 'Modifier'}) }}
+    </section>
+</main>
+{% endblock %}

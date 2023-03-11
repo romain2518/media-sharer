@@ -16,6 +16,16 @@ class PatchNote
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 5,
+        max: 30,
+        minMessage: 'Le titre doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le titre doit contenir au maximum {{ limit }} caractères.',
+    )]
+    #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
+    private ?string $title = null;
+
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(
         min: 5,
@@ -95,6 +105,18 @@ class PatchNote
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }

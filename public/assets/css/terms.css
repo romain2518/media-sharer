@@ -15,6 +15,11 @@ section {
     background-color: #be9788;
 }
 
+section>ul {
+    list-style: revert;
+    padding-left: revert;
+}
+
 section:first-child {
     border-bottom: 1px solid #7f7f7f;
     position: sticky;
@@ -75,6 +80,8 @@ section:last-child h2 {
     font-size: 1.8em;
 }
 
+article {position: relative;}
+
 section:last-child li::marker,
 section:last-child h3 {
     font-size: 1.5em;
@@ -83,6 +90,20 @@ section:last-child h3 {
 
 section:last-child li p {font-size: 1.1em;}
 
+.date {display: flex;}
+
+.date img {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.25em;
+    filter: brightness(0) saturate(100%) invert(94%) sepia(13%) saturate(90%) hue-rotate(325deg) brightness(93%) contrast(89%);
+}
+
+.date p {
+    font-weight: lighter;
+    font-style: italic;
+    margin: 0;
+}
 
 @media (width >= 1024px ) {
     section {background-color: unset;}
@@ -103,5 +124,12 @@ section:last-child li p {font-size: 1.1em;}
     }
 
     .section-displayer {display: none;}
+
+    article .dropdown>button {display: none;}
+    
+    article .dropdown.active>button,
+    article:hover .dropdown>button,
+    article:active .dropdown>button,
+    article:focus-within .dropdown>button {display: block;}
 
 }

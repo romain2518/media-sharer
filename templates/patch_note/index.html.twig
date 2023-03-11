@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notes de mise à jour{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/terms.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Sommaire</h2>
+        <button class="section-displayer"><span>&lt;</span></button>
+        <ul>
+            {% for patch_note in patch_notes %}
+                <li><a href="#patch_note{{ loop.index }}">{{ patch_note.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <h2>Notes de mise à jour</h2>
+        <ul>
+            {% for patch_note in patch_notes %}
+                <li>
+                    <article>
+                        <h3 id="patch_note{{ loop.index }}">{{ patch_note.title }}</h3>
+                        <div class="date">
+                            <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                            <p>Le {{ patch_note.createdAt ? patch_note.createdAt|format_datetime(locale='fr', pattern='EEEE dd MMMM YYYY à HH:mm') : '' }}</p>
+                        </div>
+                        <p>{{ patch_note.note|nl2br }}</p>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="dropdown">
+                                <button type="button">
+                                    <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                                </button>
+                                <div class="dropdown-content">
+                                    <ul>
+                                    <li><a href="{{ path('app_patch-note_edit', {'id': patch_note.id}) }}"><img src="{{ asset('assets/images/icons/edit.svg') }}" alt="Crayon"><span>Modifier</span></a></li>
+                                    <li>
+                                        <form method="post" action="{{ path('app_patch-note_delete', {'id': patch_note.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ patch_note.id) }}">
+                                            <img src="{{ asset('assets/images/icons/delete.svg') }}" alt="Poubelle">
+                                            <button>Supprimer</button>
+                                        </form>
+                                    </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </article>
+                </li>
+            {% else %}
+                <p>Aucune note de mise à jour n'a été trouvée</p>
+            {% endfor %}
+        </ul>
+
+        {% if patch_notes %}
+            <div class="pagination">
+                <a href="{{ path('app_patch-note_index', {limit: limit, offset: previousOffset}) }}">Précédent</a>
+                <a href="{{ path('app_patch-note_index', {limit: limit, offset: nextOffset}) }}">Suivant</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/terms.js') }}"></script>
+{% endblock %}

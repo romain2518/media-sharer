@@ -117,6 +117,7 @@ class AppFixtures extends Fixture
             $note = new PatchNote();
             $note
                 ->setUser($users[random_int(0, 1)])
+                ->setTitle($faker->realText(30))
                 ->setNote($faker->realText(2000))
                 ;
             $manager->persist($note);
