@@ -10,6 +10,8 @@ use App\Entity\PatchNote;
 use App\Entity\Status;
 use App\Entity\User;
 use App\Entity\UserReport;
+use DateInterval;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -36,6 +38,7 @@ class AppFixtures extends Fixture
             ->setPassword($this->hasher->hashPassword($user, "J'ai 19 ans."))
             ->setPicturePath('1.jfif')
             ->setIsVerified(1)
+            ->setCreatedAt((new DateTime('now'))->add(new DateInterval('PT1S')))
             ;
         $users[] = $user;
         $manager->persist($user);
@@ -49,6 +52,7 @@ class AppFixtures extends Fixture
             ->setPassword($this->hasher->hashPassword($user, "J'ai 19 ans."))
             ->setPicturePath('2.jfif')
             ->setIsVerified(1)
+            ->setCreatedAt((new DateTime('now'))->add(new DateInterval('PT2S')))
             ;
         $users[] = $user;
         $manager->persist($user);
@@ -63,6 +67,7 @@ class AppFixtures extends Fixture
                 ->setPassword($this->hasher->hashPassword($user, "J'ai 19 ans."))
                 ->setPicturePath("$i.jfif")
                 ->setIsVerified(random_int(0, 1))
+                ->setCreatedAt((new DateTime('now'))->add(new DateInterval('PT'.$i.'S')))
                 ;
             $users[] = $user;
             $manager->persist($user);
