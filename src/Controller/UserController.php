@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\DeleteAccountType;
 use App\Form\EditLoginsType;
 use App\Form\EditProfileType;
+use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -18,12 +19,26 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Vich\UploaderBundle\Handler\UploadHandler;
 
 class UserController extends AbstractController
 {
     public function __construct(
         private EmailVerifier $emailVerifier,
     ) {
+    }
+
+    #[Route(' /gestion/utilisateur/{limit}/{offset}', name: 'app_user_index', requirements: ['limit' => '\d+', 'offset' => '\d+'], methods: ['GET'])]
+    public function index(UserRepository $userRepository, int $limit = 20, int $offset = 0): Response
+    {
+        return $this->render('user/index.html.twig', [
+            'users' => $userRepository->findBy([], ['createdAt' => 'DESC'], $limit, $offset),
+            'roles' => User::getTransRoles(),
+            'availableRolesForEdit' => User::getAvailableRolesForEdit(),
+            'previousOffset' => $offset - $limit < 0 ? 0 : $offset - $limit,
+            'nextOffset' => $offset + $limit,
+            'limit' => $limit,
+        ]);
     }
 
     #[Route('/modification-des-identifiants', name: 'app_user_edit-logins', methods: ['GET', 'POST'])]
@@ -196,6 +211,59 @@ class UserController extends AbstractController
             [
                 'groups' => [
                     'api_user_light'
+                ]
+            ]
+        );
+    }
+
+    #[Route(' /gestion/utilisateur/{id}/{action}', name: 'app_user_manage',
+        requirements: ['action' => '^(reinitialisation-photo-de-profil)|(reinitialisation-pseudo)|(modification-role)$'], 
+        methods: ['POST'], defaults: ['_format' => 'json'])]
+    public function manage(Request $request, User $user, string $action, EntityManagerInterface $entityManager, UploadHandler $vichUploader): JsonResponse
+    {
+        /** @var User $user */
+
+        //? Checking CSRF Token
+        $token = $request->request->get('_token');
+        $isValidToken = $this->isCsrfTokenValid('manage '.$user->getId(), $token);
+        if (!$isValidToken) {
+            return $this->json('Jeton invalide', Response::HTTP_FORBIDDEN);
+        }
+
+        $this->denyAccessUnlessGranted('USER_MANAGE', $user);
+
+        //? Checking if role does exist if action is to edit role
+        if ('modification-role' === $action) {
+            $newRole = $request->request->get('role');
+
+            if (!in_array($newRole, User::getAvailableRolesForEdit())) {
+                return $this->json('Ce rôle n\'existe pas.', Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+        }
+
+        //? Edit the user
+        switch ($action) {
+            case 'reinitialisation-photo-de-profil':
+                $vichUploader->remove($user, 'pictureFile');
+                $user->setPicturePath(null);
+                break;
+            case 'reinitialisation-pseudo':
+                $user->setPseudo('Membre #'. $user->getId());
+                break;
+            case 'modification-role':
+                $user->setRoles([$newRole]);
+                break;
+        }
+
+        $entityManager->flush();
+
+        return $this->json(
+            $user,
+            Response::HTTP_PARTIAL_CONTENT,
+            [],
+            [
+                'groups' => [
+                    'api_user_detailed'
                 ]
             ]
         );

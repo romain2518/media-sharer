@@ -49,6 +49,7 @@ security:
         - { path: ^/signalement, roles: ROLE_USER }
 
         #? Back office
+        - { path: ^/gestion/utilisateur/[0-9]+/modification-role, roles: ROLE_SUPERADMIN }
         - { path: ^/gestion, roles: ROLE_ADMIN }
 
     role_hierarchy:

@@ -30,6 +30,12 @@ article {
 
 article:last-child {border-bottom: 0;}
 
+article>img {
+    width: 125px;
+    height: 125px;
+    margin-right: 1em;
+}
+
 article h3 {font-weight: normal;}
 article h3 span {font-weight: bold;}
 article h3 span:first-child {color: #4070f4;}
@@ -137,13 +143,13 @@ article h3 span:last-child {color: #c20000;}
 .actions {
     display: flex;
     flex-direction: column;
-}
-.actions form {
-    margin: auto;
+    justify-content: space-evenly;
+    row-gap: 5px;
 }
 
-.actions form button {
-    width: fit-content;
+.actions button {
+    width: -webkit-fill-available;
+    width: -moz-available;
     padding: .5em;
     border-radius: 6px;
     color: #fff;
@@ -154,9 +160,9 @@ article h3 span:last-child {color: #c20000;}
     cursor: pointer;
 }
 
-.actions form button:hover,
-.actions form button:active,
-.actions form button:focus {
+.actions button:hover,
+.actions button:active,
+.actions button:focus {
     background-color: #003de4;
 }
 

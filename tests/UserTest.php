@@ -226,6 +226,196 @@ class UserTest extends WebTestCaseMessageBeautifier
         $this->assertStringNotContainsString($unblockRequestContent, $client->getResponse()->getContent());
     }
 
+    public function testManageList(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        
+        $users = $userRepository->findBy([], null, 3);
+        // Super admin : $users[0]
+        // Admin : $users[1]
+        // User : $users[2]
+        
+        $client->request('GET', '/gestion/utilisateur');
+        $this->assertResponseRedirects('/connexion');
+
+        $client->loginUser($users[2]);
+        $client->request('GET', '/gestion/utilisateur');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        $client->loginUser($users[1]);
+        $client->request('GET', '/gestion/utilisateur');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h2', 'Liste des utilisateurs');
+        $this->assertSelectorNotExists('select.POST_CTA');
+
+        $client->loginUser($users[0]);
+        $client->request('GET', '/gestion/utilisateur');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h2', 'Liste des utilisateurs');
+        $this->assertSelectorExists('select.POST_CTA');
+    }
+
+    public function testResetPseudo(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        
+        $users = $userRepository->findBy([], null, 3);
+        // Super admin : $users[0]
+        // Admin : $users[1]
+        // User : $users[2]
+        
+        $client->loginUser($users[1]);
+        
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/gestion/utilisateur');
+        $extracts = $crawler->filter('section>article:first-of-type')->extract(['data-id', 'data-token'])[0];
+        
+        //? Making sure that targeted user only has role ROLE_USER and has a valid pseudo
+        $targetedUser = $userRepository->find($extracts[0]);
+        $targetedUser->setPseudo('This is a pseudo');
+        $targetedUser->setRoles(['ROLE_USER']);
+        $entityManager->flush();
+
+        //? Bad token test
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/reinitialisation-pseudo', ['_token' => 'Not a valid token']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Reset test on a user with superior role (admin trying to manage superadmin)
+        $client->request('POST', '/gestion/utilisateur/' . $users[0]->getId() . '/reinitialisation-pseudo', ['_token' => $extracts[1]]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Reset test
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/reinitialisation-pseudo', ['_token' => $extracts[1]]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_PARTIAL_CONTENT);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        $resetRequestContent = $client->getResponse()->getContent();
+        $this->assertStringContainsString('"pseudo":"Membre #'.$extracts[0].'"', $resetRequestContent);
+    }
+
+    public function testResetPicture(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        
+        $users = $userRepository->findBy([], null, 3);
+        // Super admin : $users[0]
+        // Admin : $users[1]
+        // User : $users[2]
+        
+        $client->loginUser($users[1]);
+        
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/gestion/utilisateur');
+        $extracts = $crawler->filter('section>article:first-of-type')->extract(['data-id', 'data-token'])[0];
+        
+        //? Making sure that targeted user only has role ROLE_USER and has a valid picture
+        $targetedUser = $userRepository->find($extracts[0]);
+        $targetedUser->setPicturePath('valid-pic.png');
+        $targetedUser->setRoles(['ROLE_USER']);
+        $entityManager->flush();
+
+        //? Bad token test
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/reinitialisation-photo-de-profil', ['_token' => 'Not a valid token']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Reset test on a user with superior role (admin trying to manage superadmin)
+        $client->request('POST', '/gestion/utilisateur/' . $users[0]->getId() . '/reinitialisation-photo-de-profil', ['_token' => $extracts[1]]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Reset test
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/reinitialisation-photo-de-profil', ['_token' => $extracts[1]]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_PARTIAL_CONTENT);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        $resetRequestContent = $client->getResponse()->getContent();
+        $this->assertStringContainsString('"picturePath":null', $resetRequestContent);
+    }
+
+    public function testEditRole(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        
+        $users = $userRepository->findBy([], null, 3);
+        // Super admin : $users[0]
+        // Admin : $users[1]
+        // User : $users[2]
+        
+        //! Testing with admin
+        $client->loginUser($users[1]);
+
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/gestion/utilisateur');
+        $extracts = $crawler->filter('section>article:first-of-type')->extract(['data-id', 'data-token'])[0];
+        
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/modification-role', ['_token' => $extracts[1], 'role' => 'ROLE_USER']);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+        //! Testing with Super admin
+        $client->loginUser($users[0]);
+        
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/gestion/utilisateur');
+        $extracts = $crawler->filter('section>article:first-of-type')->extract(['data-id', 'data-token'])[0];
+        
+        //? Making sure that targeted user only has role ROLE_USER
+        $targetedUser = $userRepository->find($extracts[0]);
+        $targetedUser->setRoles(['ROLE_USER']);
+        $entityManager->flush();
+
+        //? Bad token test
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/modification-role', ['_token' => 'Not a valid token', 'role' => 'ROLE_ADMIN']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Edit role test on a SUPERADMIN
+        $client->request('POST', '/gestion/utilisateur/' . $users[0]->getId() . '/modification-role', ['_token' => $extracts[1], 'role' => 'ROLE_ADMIN']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Edit role test set undefined role
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/modification-role', ['_token' => $extracts[1], 'role' => 'ROLE_UNDEFINED']);
+                
+        $this->assertResponseIsUnprocessable();
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        
+        //? Edit role test set admin
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/modification-role', ['_token' => $extracts[1], 'role' => 'ROLE_ADMIN']);
+        
+        $this->assertResponseStatusCodeSame(Response::HTTP_PARTIAL_CONTENT);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        $resetRequestContent = $client->getResponse()->getContent();
+        $this->assertStringContainsString('"roles":["ROLE_ADMIN","ROLE_USER"]', $resetRequestContent);
+        
+        //? Edit role test set user
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/modification-role', ['_token' => $extracts[1], 'role' => 'ROLE_USER']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_PARTIAL_CONTENT);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+        $resetRequestContent = $client->getResponse()->getContent();
+        $this->assertStringContainsString('"roles":["ROLE_USER"]', $resetRequestContent);
+    }
+
     public function getLoginsDatas(): array
     {
         return [

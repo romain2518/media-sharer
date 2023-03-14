@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/managementList.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Liste des utilisateurs</h2>
+        {% for user in users %}
+            <article data-id="{{ user.id }}" data-token="{{ csrf_token('manage ' ~ user.id) }}">
+                <img src="{{ asset('assets/images/userPictures/' ~ user.picturePath ?? '0.svg') }}" alt="Image de profil">
+                <div class="infos">
+                    <h3>{{ user.pseudo }}</h3>
+                    <div class="date">
+                        <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                        <p>Inscrit le {{ user.createdAt ? user.createdAt|format_datetime(locale='fr', pattern='EEEE dd MMMM YYYY à HH:mm') : '' }}</p>
+                    </div>
+                    <p class="role">Rôles : {{ user.roles|map(role => roles[role])|join(', ') }}</p>
+                </div>
+                <div class="actions">
+                    <button class="POST_CTA" data-action="reinitialisation-pseudo">Réinitialiser le pseudo</button>
+                    <button class="POST_CTA" data-action="reinitialisation-photo-de-profil">Réinitialiser la photo de profil</button>
+                    {% if is_granted('ROLE_SUPERADMIN') %}
+                        <select class="POST_CTA" data-action="modification-role">
+                            <option>Changer le rôle</option>
+                            {% for transRole, role in availableRolesForEdit %}
+                                <option value="{{ role }}">{{ transRole }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+            </article>
+        {% else %}
+            <p>Aucun utilisateur trouvé</p>
+        {% endfor %}
+        
+        {% if users %}
+            <div class="pagination">
+                <a href="{{ path('app_user_index', {limit: limit, offset: previousOffset}) }}">Précédent</a>
+                <a href="{{ path('app_user_index', {limit: limit, offset: nextOffset}) }}">Suivant</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+
+<script>
+    const BASE_URL = '/gestion/utilisateur';
+    const ROLES_TRANSLATOR = {{ roles|json_encode|raw }}
+</script>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/managementList.js') }}"></script>
+{% endblock %}

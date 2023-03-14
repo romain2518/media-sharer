@@ -122,6 +122,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->blockedUsers = new ArrayCollection();
     }
 
+    public static function getAvailableRolesForEdit(): array
+    {
+        return [
+            'Utilisateur' => 'ROLE_USER',
+            'Admin' => 'ROLE_ADMIN',
+        ];
+    }
+
+    public static function getTransRoles(): array
+    {
+        return [
+            'ROLE_USER' => 'Utilisateur',
+            'ROLE_ADMIN' => 'Admin',
+            'ROLE_SUPERADMIN' => 'Super admin',
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;
