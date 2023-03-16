@@ -49,7 +49,7 @@
 | /gestion/utilisateur/{id}/reinitialisation-pseudo | POST | User | manage | |
 | /gestion/utilisateur/{id}/modification-role | POST | User | manage | |
 | /gestion/utilisateur/{id}/ban | POST | User | manage | |
-| /gestion/ban/{limit}/{offset} | GET/POST | Ban | index | GET : liste, POST : nouveau bannissement |
+| /gestion/ban/{order}/{limit}/{offset} | GET/POST | Ban | index | GET : liste, POST : nouveau bannissement |
 | /gestion/ban/{id}/suppression | POST | Ban | delete | |
 
 ## Messagerie instantanée

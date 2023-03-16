@@ -62,6 +62,8 @@ const handleManageActions = function (event) {
                     articleElm.querySelector('h3').textContent = json.pseudo;
                     articleElm.querySelector('.role').textContent = 'Rôles : ' + json.roles.map(role => ROLES_TRANSLATOR[role]).join(', ');
                 });
+            } else if (response.status === 204) {
+                articleElm.remove();
             } else {
                 currentTargetElm.selectedIndex = 0;
                 alert('Une erreur est survenue.')

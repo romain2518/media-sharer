@@ -109,7 +109,7 @@ section form {margin-top: 2em;}
     font-size: .9em;
 }
 
-.info.error {color: red;}
+.info.error {color: #C20000;}
 
 .info {margin: 2em 0 .7em 0;}
 .info p,

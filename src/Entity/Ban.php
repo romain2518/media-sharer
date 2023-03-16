@@ -43,7 +43,7 @@ class Ban
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'bans')]
+    #[ORM\ManyToOne(inversedBy: 'bans', fetch: 'EAGER')]
     private ?User $user = null;
 
     public function getId(): ?int

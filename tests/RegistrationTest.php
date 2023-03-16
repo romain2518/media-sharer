@@ -26,8 +26,8 @@ class RegistrationTest extends WebTestCaseMessageBeautifier
         $client->submitForm('S\'inscrire', [
             'registration_form[pseudo]' => 'Pseudo',
             'registration_form[email]' => 'pseudo@email.com',
-            'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-            'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+            'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+            'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
             'registration_form[agreeTerms]' => '1',
         ]);
         
@@ -47,10 +47,29 @@ class RegistrationTest extends WebTestCaseMessageBeautifier
     {
         $client = static::createClient();
         $client->request('GET', '/inscription');
+        $this->assertResponseIsSuccessful();
 
         $client->submitForm('S\'inscrire', $data);
         
         $this->assertResponseIsUnprocessable();
+    }
+
+    public function testRegisterWithBannedEmail(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/inscription');
+        $this->assertResponseIsSuccessful();
+
+        $client->submitForm('S\'inscrire', [
+            'registration_form[pseudo]' => 'Pseudo',
+            'registration_form[email]' => 'banned@mail.com',
+            'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+            'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
+            'registration_form[agreeTerms]' => '1',
+        ]);
+        
+        $this->assertResponseIsUnprocessable();
+        $this->assertSelectorTextContains('.info.error li', 'L\'adresse mail "banned@mail.com" a été bannie.');
     }
 
     /**
@@ -107,77 +126,77 @@ class RegistrationTest extends WebTestCaseMessageBeautifier
             'Pseudo min length' => [[
                 'registration_form[pseudo]' => 'A',
                 'registration_form[email]' => 'unused@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Pseudo max length' => [[
                 'registration_form[pseudo]' => 'This string has more than 30 characters',
                 'registration_form[email]' => 'unused@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Pseudo blank' => [[
                 'registration_form[pseudo]' => '',
                 'registration_form[email]' => 'unused@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Pseudo null' => [[
                 'registration_form[pseudo]' => null,
                 'registration_form[email]' => 'unused@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Email invalid' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => 'Not a valid email',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Email min length' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => 'a@',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Email max length' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => str_repeat('a', 180) . '@mail.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Email blank' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => '',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Email null' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => null,
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Email already used' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => 'pseudo@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
             'Password not the same' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => 'unused@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
                 'registration_form[plainPassword][second]' => 'Je n\'ai pas 19 ans.',
                 'registration_form[agreeTerms]' => '1',
             ]],
@@ -219,8 +238,8 @@ class RegistrationTest extends WebTestCaseMessageBeautifier
             'Terms not agreed' => [[
                 'registration_form[pseudo]' => 'Pseudo',
                 'registration_form[email]' => 'unused@email.com',
-                'registration_form[plainPassword][first]' => 'J\ai 19 ans.',
-                'registration_form[plainPassword][second]' => 'J\ai 19 ans.',
+                'registration_form[plainPassword][first]' => 'J\'ai 19 ans.',
+                'registration_form[plainPassword][second]' => 'J\'ai 19 ans.',
                 // 'registration_form[agreeTerms]' => '1',
             ]],
         ];

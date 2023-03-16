@@ -54,6 +54,22 @@ class LoginTest extends WebTestCaseMessageBeautifier
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
+    public function testLoginWithWithBannedEmail(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/connexion');
+        $this->assertResponseIsSuccessful();
+
+        $client->submitForm('Se connecter', [
+            'email' => 'banned@mail.com',
+            'password' => 'J\'ai 19 ans.',
+        ]);
+        
+        $this->assertResponseRedirects('/connexion');
+        $client->followRedirect();
+        $this->assertSelectorTextContains('.info.error', 'Cette adresse mail a été bannie');
+    }
+
     public function testLoginWithNonVerifiedUser()
     {
         $client = static::createClient();

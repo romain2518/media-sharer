@@ -81,7 +81,15 @@ class AppFixtures extends Fixture
         }
 
         //! Ban
-        for ($i=0; $i < 20; $i++) { 
+        $ban = new Ban();
+        $ban
+            ->setUser($users[random_int(0,1)])
+            ->setEmail('banned@mail.com')
+            ->setComment($faker->realText(255))
+            ;
+        $manager->persist($ban);
+
+        for ($i=1; $i < 20; $i++) { 
             $ban = new Ban();
             $ban
                 ->setUser($users[random_int(0,1)])

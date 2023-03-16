@@ -416,6 +416,61 @@ class UserTest extends WebTestCaseMessageBeautifier
         $this->assertStringContainsString('"roles":["ROLE_USER"]', $resetRequestContent);
     }
 
+    public function testBan(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        
+        $users = $userRepository->findBy([], null, 3);
+        // Super admin : $users[0]
+        // Admin : $users[1]
+        // User : $users[2]
+        
+        //! Testing with admin
+        $client->loginUser($users[1]);
+        
+        //? Getting CSRF Token
+        $crawler = $client->request('GET', '/gestion/utilisateur');
+        $extracts = $crawler->filter('section>article:first-of-type')->extract(['data-id', 'data-token'])[0];
+        $targetedUser = $userRepository->find($extracts[0]);
+
+        //? Bad token test
+        $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/ban', ['_token' => 'Not a valid token']);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        //? Test ban a SUPERADMIN
+        $targetedUser->setRoles(['ROLE_SUPERADMIN', 'ROLE_USER']);
+        $entityManager->flush();
+
+        $client->request('POST', '/gestion/utilisateur/' . $users[0]->getId() . '/ban', ['_token' => $extracts[1]]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertSame('application/json', $client->getResponse()->headers->get('Content-Type'));
+
+        // $userRepository must be reset to access updated datas
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        
+        $targetedUserPostBan = $userRepository->find($targetedUser->getId());
+        $this->assertNotNull($targetedUserPostBan);
+        
+        //? Test ban
+        $targetedUser->setRoles(['ROLE_USER']);
+        $entityManager->flush();
+
+        $crawler = $client->request('POST', '/gestion/utilisateur/' . $extracts[0] . '/ban', ['_token' => $extracts[1]]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
+
+        // $userRepository must be reset to access updated datas
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        
+        $targetedUserPostBan = $userRepository->find($targetedUser->getId());
+        $this->assertNull($targetedUserPostBan);
+    }
+
     public function getLoginsDatas(): array
     {
         return [

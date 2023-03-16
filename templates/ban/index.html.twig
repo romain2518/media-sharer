@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des bannissements{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/managementList.css') }}">
+{% endblock %}
+
+{% block body %}
+<main>
+    <section>
+        <h2>Nouveau bannissement</h2>
+        {{ form_start(form) }}
+            {# Email #}
+            <div class="info">
+                <p>Si un compte est associé à cette adresse mail, il sera supprimé.</p>
+            </div>
+            {% if form_errors(form.email) %}
+                <div class="info error">
+                    {{ form_errors(form.email) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper">
+                {{ form_widget(form.email, { 'attr': { 'placeholder': 'Adresse email' } }) }}
+            </div>
+
+            {# Comment #}
+            {% if form_errors(form.comment) %}
+                <div class="info error">
+                    {{ form_errors(form.comment) }}
+                </div>
+            {% endif %}
+
+            <div class="input-wrapper has-textarea">
+                {{ form_widget(form.comment, { 'attr': { 'placeholder': 'Commentaire' } }) }}
+            </div>
+
+            <div class="input-wrapper">
+                <button type="submit">Bannir</button>
+            </div>
+        {{ form_end(form) }}
+
+        <h2>Liste des bannissements</h2>
+
+        <div class="order">
+            {% if order is same as('email') %}
+                <a href="{{ path('app_ban_index', {order: 'date', limit: limit, offset: offset}) }}">Trier par date de bannissement</a>
+            {% else %}
+                <a href="{{ path('app_ban_index', {order: 'email', limit: limit, offset: offset}) }}">Trier par email</a>
+            {% endif %}
+        </div>
+
+        {% for ban in bans %}
+            <article>
+                <div class="infos">
+                    <h3><span>{{ ban.email }}</span> bannit par <span>{{ ban.user.pseudo }}</span></h3>
+                    <div class="date">
+                        <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                        <p>Le {{ ban.createdAt ? ban.createdAt|format_datetime(locale='fr', pattern='EEEE dd MMMM YYYY à HH:mm') : '' }}</p>
+                    </div>
+                    <p>{{ ban.comment }}</p>
+                </div>
+                <div class="actions">
+                    <form method="post" action="{{ path('app_ban_delete', {'id': ban.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ban.id) }}">
+                        <button>Supprimer</button>
+                    </form>
+                </div>
+            </article>
+        {% else %}
+            <p>Aucun bannissement trouvé</p>
+        {% endfor %}
+        
+        {% if bans %}
+            <div class="pagination">
+                <a href="{{ path('app_ban_index', {order: order, limit: limit, offset: previousOffset}) }}">Précédent</a>
+                <a href="{{ path('app_ban_index', {order: order, limit: limit, offset: nextOffset}) }}">Suivant</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

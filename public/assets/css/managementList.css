@@ -21,6 +21,9 @@ main>section {
     flex-direction: column;
 }
 
+section form {margin-top: 0;}
+section form[name=ban] {border-bottom: 1px solid #000;}
+
 article {
     display: flex;
     flex-direction: column;
@@ -28,7 +31,9 @@ article {
     border-bottom: 1px solid #000;
 }
 
-article:last-child {border-bottom: 0;}
+.order a {color: #000;}
+
+article:last-of-type {border-bottom: 0;}
 
 article>img {
     width: 125px;

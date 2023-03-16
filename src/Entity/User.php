@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Validator as CustomAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -38,6 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'L\'adresse email doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
+    #[CustomAssert\NotBannedEmail]
     private ?string $email = null;
 
     #[ORM\Column]

@@ -11,25 +11,42 @@
     <section>
         <h2>Connexion</h2>
         <form method="POST">
-            {% if error %}
+            {% if app.session.flashBag.has('login_error') or error %}
                 <div class="info error">
-                    <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                    {% for flash_error in app.flashes('login_error') %}
+                        {{ flash_error }}
+                    {% endfor %}
+
+                    {% if error %}
+                        <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+                    {% endif %}
                 </div>
             {% endif %}
+
+
+            {# Email #}
             <div class="input-wrapper">
                 <input type="email" value="{{ last_username }}" name="email" placeholder="Adresse mail" autocomplete="email" required autofocus>
             </div>
+
+            {# Password #}
             <div class="input-wrapper">
                 <input name="password" type="password" placeholder="Mot de passe" autocomplete="current-password" required>
             </div>
+
+            {# CSRF Token #}
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-            <div class="input-wrapper">
-                <button type="submit">Se connecter</button>
-            </div>
+
+            {# Remember me #}
             <div class="checkbox">
                 <input id="remember_me" type="checkbox" name="_remember_me">
                 <label for="remember_me">Se souvenir de moi</label>
             </div>
+
+            <div class="input-wrapper">
+                <button type="submit">Se connecter</button>
+            </div>
+            
             <div class="text">
                 <p>Vous n'avez pas de compte ? <a href="{{ path('app_register') }}">S'inscrire</a></p>
             </div>

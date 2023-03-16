@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Ban;
 use App\Entity\User;
 use App\Form\DeleteAccountType;
 use App\Form\EditLoginsType;
@@ -217,11 +218,11 @@ class UserController extends AbstractController
     }
 
     #[Route(' /gestion/utilisateur/{id}/{action}', name: 'app_user_manage',
-        requirements: ['action' => '^(reinitialisation-photo-de-profil)|(reinitialisation-pseudo)|(modification-role)$'], 
+        requirements: ['action' => '^(reinitialisation-photo-de-profil)|(reinitialisation-pseudo)|(modification-role)|(ban)$'], 
         methods: ['POST'], defaults: ['_format' => 'json'])]
-    public function manage(Request $request, User $user, string $action, EntityManagerInterface $entityManager, UploadHandler $vichUploader): JsonResponse
+    public function manage(Request $request, User $user, string $action, EntityManagerInterface $entityManager, UserInterface $loggedUser, UploadHandler $vichUploader): JsonResponse
     {
-        /** @var User $user */
+        /** @var User $loggedUser */
 
         //? Checking CSRF Token
         $token = $request->request->get('_token');
@@ -253,9 +254,24 @@ class UserController extends AbstractController
             case 'modification-role':
                 $user->setRoles([$newRole]);
                 break;
+            case 'ban':
+                $ban = new Ban();
+                $ban
+                    ->setEmail($user->getEmail())
+                    ->setComment(sprintf('Utilisateur banni : %s a été banni par %s.', $user->getPseudo(), $loggedUser->getPseudo()))
+                    ->setUser($loggedUser)
+                ;
+
+                $entityManager->persist($ban);
+                $entityManager->remove($user);
+                break;
         }
 
         $entityManager->flush();
+
+        if ('ban' === $action) {
+            return $this->json(null, Response::HTTP_NO_CONTENT);
+        }
 
         return $this->json(
             $user,
