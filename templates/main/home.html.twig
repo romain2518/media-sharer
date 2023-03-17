@@ -4,8 +4,16 @@
 
 {% block body %}
 
-    <h1>Hello ! ✅</h1>
+<h1>Hello ! ✅</h1>
     
-    <input type="hidden" name="block_user_token" value="{{ csrf_token('block user') }}">
-    <input type="hidden" name="unblock_user_token" value="{{ csrf_token('unblock user') }}">
+<input type="hidden" name="block_user_token" value="{{ csrf_token('block user') }}">
+<input type="hidden" name="unblock_user_token" value="{{ csrf_token('unblock user') }}">
+
+<script>
+    const JWTToken = {{ token|json_encode|raw }};
+</script>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('assets/js/webSocket.js') }}"></script>
 {% endblock %}
