@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\UserReport;
 use App\Form\UserReportType;
 use App\Repository\UserReportRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,11 +25,19 @@ class UserReportController extends AbstractController
         ]);
     }
 
-    #[Route('/signalement/utilisateur', name: 'app_user-report_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserReportRepository $userReportRepository, UserInterface $user): Response
+    #[Route('/signalement/utilisateur/{id}', name: 'app_user-report_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, UserReportRepository $userReportRepository, UserInterface $user, UserRepository $userRepository, ?int $id = null): Response
     {
+        $targetedUser = null;
+        if (null !== $id) {
+            $targetedUser = $userRepository->find($id ?? 0);
+            if (null === $targetedUser) {
+                return $this->redirectToRoute('app_user-report_new');
+            }
+        }
+
         $userReport = new UserReport();
-        $form = $this->createForm(UserReportType::class, $userReport);
+        $form = $this->createForm(UserReportType::class, $userReport, ['targetedUser' => $targetedUser]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

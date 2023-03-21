@@ -21,6 +21,9 @@ class UserReportType extends AbstractType
                 'placeholder' => 'Choississez un utilisateur',
                 'choice_label' => 'pseudo',
                 'empty_data' => 0,
+                'choice_attr' => function (?User $user) use(&$options) {
+                    return $user === $options['targetedUser'] ? ['selected' => ''] : [];
+                },
             ])
         ;
     }
@@ -29,6 +32,7 @@ class UserReportType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UserReport::class,
+            'targetedUser' => null,
         ]);
     }
 }
