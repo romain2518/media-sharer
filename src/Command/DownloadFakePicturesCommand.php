@@ -6,6 +6,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -24,9 +25,29 @@ class DownloadFakePicturesCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addOption(
+            'test_mode',
+            't',
+            InputOption::VALUE_NONE,
+            'If provided, the command will be executed in test mode, and won\'t actually remove or download pictures.'
+        );
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        // If test mode is on, pictures are not removed nor downloaded
+        $testMode = $input->getOption('test_mode');
+        if ($testMode) {
+            $io->success([
+                'Success, the following pictures were downloaded :',
+                '20 user pictures,',
+            ]);
+            return Command::SUCCESS;
+        }
 
         //! Clearing each folder
         $io->section('Removing current pictures');

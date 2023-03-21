@@ -15,7 +15,7 @@ class DownloadFakePicturesCommandTest extends KernelTestCase
         
         $command = $application->find('app:download-fake-pictures');
         $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
+        $commandTester->execute(['--test_mode' => true]);
 
         $outpout = $commandTester->getDisplay();
 
