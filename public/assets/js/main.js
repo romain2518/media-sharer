@@ -31,12 +31,14 @@ const handleWindowClick = function (event) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Dropdown menus
+    window.addEventListener('click', handleWindowClick);
+    document.querySelectorAll('.dropdown>button').forEach(element => {
+        element.addEventListener('click', handleDropdownBtn);
+    });
+
+    // Button up
     document.querySelector('button.up').addEventListener('click', handleButtonUpClick);
     window.addEventListener('scroll', handleBodyScroll);
 });
 
-window.addEventListener('click', handleWindowClick);
-
-document.querySelectorAll('.dropdown>button').forEach(element => {
-    element.addEventListener('click', handleDropdownBtn);
-});
