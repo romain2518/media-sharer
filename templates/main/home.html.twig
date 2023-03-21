@@ -1,19 +1,271 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MainController!{% endblock %}
+{% block title %}Accueil{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/messaging.css') }}">
+{% endblock %}
 
 {% block body %}
-
-<h1>Hello ! ✅</h1>
+<main>
+    <section>
+        <header class="myself">
+            <img class="profile-pic" src="{{ asset('assets/images/userPictures/' ~ app.user.picturePath ?? '0.svg') }}" alt="Photo de profil">
+            <h2>{{ app.user.pseudo }}</h2>
+            <div class="dropdown">
+                <button type="button">
+                    <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                </button>
+                <div class="dropdown-content">
+                    <ul>
+                        <li><a href="{{ path('app_user_edit-profile') }}"><img src="{{ asset('assets/images/icons/edit.svg') }}" alt="Crayon"><span>Modifier le profil</span></a></li>
+                        <li><a href="{{ path('app_user_edit-logins') }}"><img src="{{ asset('assets/images/icons/edit.svg') }}" alt="Crayon"><span>Modifier les identifiants</span></a></li>
+                        <li><a href="{{ path('app_user_delete') }}"><img src="{{ asset('assets/images/icons/delete.svg') }}" alt="Poubelle"><span>Supprimer le compte</span></a></li>
+                        <li><a href="{{ path('app_logout') }}"><img src="{{ asset('assets/images/icons/logout.svg') }}" alt="Icône de déconnexion"><span>Déconnexion</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <div class="search">
+            <input autocomplete="off" autocorrect="off" type="text" spellcheck="false" placeholder="Rechercher" aria-label="Rechercher">
+            <button type="button">
+                <img src="{{ asset('assets/images/icons/search.svg') }}" alt="Loupe">
+            </button>
+        </div>
+        <nav class="list-selector">
+            <ul>
+                <li><button for="chat-list" class="active">Conversations</button></li>
+                <li><button for="user-list">Utilisateurs</button></li>
+                <li><button for="block-list">Bloqués</button></li>
+            </ul>
+        </nav>
+        <button class="list-displayer show">
+            <span class="show">Montrer la liste</span>
+            <span class="hide">Cacher la liste</span>
+            <div>&gt;</div>
+        </button>
+        <div class="list-container">
+            <div class="chat-list list active {{ conversations ? '' : 'is-empty' }}">
+                <ul>
+                    <li class="empty">
+                        <p>Aucun utilisateur trouvé...</p>
+                    </li>
+                    {% for conversation in conversations %}
+                        {% set otherUserIndex = conversation.users[0].id is same as(app.user.id) ? 1 : 0 %}
+                        <li>
+                            <article class="user-card {{ conversation.statuses[otherUserIndex].isRead ? '' : 'has-notification' }}" tabindex="0">
+                                <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ conversation.users[otherUserIndex].picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
+                                <div class="info-wrapper">
+                                    <h3 title="{{ conversation.users[otherUserIndex].pseudo }}">{{ conversation.users[otherUserIndex].pseudo }}</h3>
+                                    <p title="{{ (conversation.updatedAt ?? conversation.createdAt)|ago }}">{{ (conversation.updatedAt ?? conversation.createdAt)|ago }}</p>
+                                </div>
+                                <div class="notification"></div>
+                                <div class="dropdown">
+                                    <button type="button">
+                                        <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <ul>
+                                            <li><a href="#"><img src="{{ asset('assets/images/icons/mail-open') }}.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+                                            <li><a href="#"><img src="{{ asset('assets/images/icons/mail.svg') }}" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+                                            <li><button><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Bloquer</span></button></li>
+                                            <li><a href="{{ path('app_user-report_new', {id: conversation.users[otherUserIndex].id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="user-list list {{ users ? '' : 'is-empty' }}">
+                <ul>
+                    <li class="empty">
+                        <p>Aucun utilisateur trouvé...</p>
+                    </li>
+                    {% for user in users %}
+                        <li>
+                            <article class="user-card">
+                                <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
+                                <div class="info-wrapper">
+                                    <h3 title="{{ user.pseudo }}">{{ user.pseudo }}</h3>
+                                </div>
+                                <div class="dropdown">
+                                    <button type="button">
+                                        <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <ul>
+                                            <li><button><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Bloquer</span></button></li>
+                                            <li><a href="{{ path('app_user-report_new', {id: user.id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="block-list list {{ blocked_users ? '' : 'is-empty' }}">
+                <ul>
+                    <li class="empty">
+                        <p>Aucun utilisateur trouvé...</p>
+                    </li>
+                    {% for blocked_user in blocked_users %}
+                        <li>
+                            <article class="user-card">
+                                <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ blocked_user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
+                                <div class="info-wrapper">
+                                    <h3 title="{{ blocked_user.pseudo }}">{{ blocked_user.pseudo }}</h3>
+                                </div>
+                                <div class="dropdown">
+                                    <button type="button">
+                                        <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                                    </button>
+                                    <div class="dropdown-content">
+                                        <ul>
+                                            <li><button><img src="{{ asset('assets/images/icons/unblock.svg') }}" alt="Rond barré"><span>Débloquer</span></button></li>
+                                            <li><a href="{{ path('app_user-report_new', {id: blocked_user.id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="is-empty">
+        <div class="call calling">
+            <div class="timer"><img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge"><span>01:34</span></div>
+                <p class="status calling">Tentative d'appel...</p>
+                <p class="status call-canceled">Appel annulé</p>
+                <p class="status incoming-call">Appel entrant...</p>
+                <p class="status call-denied">Appel refusé</p>
+                <p class="status on-call">Appel en cours</p>
+                <p class="status call-ended">Fin d'appel</p>
+            <div class="users">
+                <div class="user">
+                    <img src="https://i.pravatar.cc/150?img=3" alt="Photo de profil 1">
+                    <div class="camera"></div>
+                    <p>Pseudo 1</p>
+                </div>
+                <div class="user">
+                    <img src="https://i.pravatar.cc/150?img=1" alt="Photo de profil 2">
+                    <div class="camera"></div>
+                    <p>Pseudo 2</p>
+                </div>
+            </div>
+            <div class="call-animation">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="screen-share">
+                <div class="screen-wrapper"><img class="screen" src="../../MatheoFontaine.github.io/image/bg1.png" alt=""></div>
+                <div class="screen-wrapper"><img class="screen" src="../../MatheoFontaine.github.io/image/bg1.png" alt=""></div>
+            </div>
+            <div class="actions">
+                <button id="call-mute" title="Désactiver le micro"><img src="{{ asset('assets/images/icons/mic.svg') }}" alt=""></button>
+                <button id="call-unmute" title="Activer le micro"><img src="{{ asset('assets/images/icons/mic-off') }}.svg" alt=""></button>
+                <button id="call-camera-off" title="Désactiver la caméra"><img src="{{ asset('assets/images/icons/camera.svg') }}" alt=""></button>
+                <button id="call-camera-on" title="Activer la caméra"><img src="{{ asset('assets/images/icons/camera-off') }}.svg" alt=""></button>
+                <button id="call-screen-share-on" title="Partager l'écran"><img src="{{ asset('assets/images/icons/screen.svg') }}" alt=""></button>
+                <button id="call-screen-share-off" title="Désactiver le partage d'écran"><img src="{{ asset('assets/images/icons/screen-crossed') }}.svg" alt=""></button>
+                <button id="call-join" title="Rejoindre l'appel"><img src="{{ asset('assets/images/icons/phone-call') }}.svg" alt=""></button>
+                <button id="call-end" title="Mettre fin à l'appel"><img src="{{ asset('assets/images/icons/phone-call') }}-end.svg" alt=""></button>
+                <button id="call-fullscreen-enter" title="Plein écran"><img src="{{ asset('assets/images/icons/fullscreen.svg') }}" alt=""></button>
+                <button id="call-fullscreen-exit" title="Quitté le mode plein écran"><img src="{{ asset('assets/images/icons/fullscreen-off') }}.svg" alt=""></button>
+            </div>
+        </div>
+        <header class="himself">
+            <img class="profile-pic" src="https://i.pravatar.cc/150?img=1" alt="Photo de profil">
+            <div class="info-wrapper">
+                <h2>Pseudo</h2>
+                <p>Inscrit le 24 Février 2023</p>
+            </div>
+            <div class="actions">
+                <button title="Démarrer un appel"><img src="{{ asset('assets/images/icons/phone.svg') }}" alt="Démarrer un appel"></button>
+                <button title="Démarrer un appel vidéo"><img src="{{ asset('assets/images/icons/camera.svg') }}" alt="Démarrer un appel vidéo"></button>
+            </div>
+            <div class="dropdown">
+                <button type="button">
+                    <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                </button>
+                <div class="dropdown-content">
+                    <ul>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/mail-open') }}.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/mail.svg') }}" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Bloquer</span></a></li>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Débloquer</span></a></li>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <div class="chat">
+            <ul>
+                <li>
+                    <article class="message-card him">
+                        <img src="https://i.pravatar.cc/150?img=1" alt="">
+                        <div class="message-wrapper">
+                            <div class="info">
+                                <p class="pseudo">Pseudo 1</p>
+                                <div class="date">
+                                    <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                                    <p>Hier</p>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <p>Lorem, ipsum.</p>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+                <li>
+                    <article class="message-card">
+                        <img src="https://i.pravatar.cc/150?img=3" alt="">
+                        <div class="message-wrapper">
+                            <div class="info">
+                                <p class="pseudo">Pseudo 3</p>
+                                <div class="date">
+                                    <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                                    <p>Hier</p>
+                                </div>
+                            </div>
+                            <div class="message">
+                                <p>Lorem, ipsum.</p>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+            </ul>
+        </div>
+        <div class="new-message">
+            <div class="textarea-wrapper">
+                <span class="textarea" role="textbox" contenteditable></span>
+                <span class="placeholder">Message...</span>
+                <div class="bar"></div>
+            </div>
+            <div class="button-wrapper">
+                <button title="Envoyer le message"><img src="{{ asset('assets/images/icons/send.svg') }}" alt="Envoyer le message"></button>
+            </div>
+        </div>
+        <p class="empty">Choisissez un utilisateur avec qui discuter...</p>
+    </section>
+</main>
     
 <input type="hidden" name="block_user_token" value="{{ csrf_token('block user') }}">
 <input type="hidden" name="unblock_user_token" value="{{ csrf_token('unblock user') }}">
 
 <script>
     const JWTToken = {{ token|json_encode|raw }};
+    const BASE_URL = '/utilisateurs-bloques';
 </script>
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ asset('assets/js/webSocket.js') }}"></script>
+    <script src="{{ asset('assets/js/messaging.js') }}"></script>
 {% endblock %}

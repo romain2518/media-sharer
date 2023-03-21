@@ -115,7 +115,7 @@ ul {
     height: 30px;
 }
 
-.dropdown-content li form>button {
+.dropdown-content li button {
     border: 0;
     padding: 0;
     background-color: unset;

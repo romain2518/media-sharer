@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Repository\ConversationRepository;
+use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,10 +14,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_main_home')]
-    public function home(UserInterface $user, JWTTokenManagerInterface $JWTManager): Response
+    public function home(UserRepository $userRepository, ConversationRepository $conversationRepository, UserInterface $user, JWTTokenManagerInterface $JWTManager): Response
     {
+        /** @var User $user */
         return $this->render('main/home.html.twig', [
             'token' => $JWTManager->create($user),
+            'users' => $userRepository->findBy([], ['pseudo' => 'ASC']),
+            'blocked_users' => $user->getBlockedUsers(),
+            'conversations' => $conversationRepository->findAllByUser($user),
         ]);
     }
 

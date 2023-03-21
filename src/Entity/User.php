@@ -105,10 +105,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PatchNote::class)]
     private Collection $patchNotes;
 
-    #[ORM\ManyToMany(targetEntity: Conversation::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Conversation::class, inversedBy: 'users', cascade: ['remove'])]
     private Collection $conversations;
 
     #[ORM\ManyToMany(targetEntity: self::class)]
+    #[ORM\OrderBy(['pseudo' => 'ASC'])]
     private Collection $blockedUsers;
 
     public function __construct()

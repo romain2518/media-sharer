@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Conversation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,26 @@ class ConversationRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * Find all conversations that a user have (load conversation, statuses & users)
+     * 
+     * @param User $user
+     * @return Conversation[] Returns an array of Conversation objects
+     */
+    public function findAllByUser(User $user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect('s, u')
+            ->innerJoin('c.statuses', 's')
+            ->innerJoin('c.users', 'u')
+            ->andWhere(':user MEMBER OF c.users')
+            ->setParameter('user', $user)
+            ->orderBy('c.updatedAt', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
 //    /**

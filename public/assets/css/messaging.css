@@ -1,0 +1,56 @@
+@import url('./messagingList.css');
+@import url('./messagingChat.css');
+@import url('./messagingCall.css');
+
+body>main {
+    max-width: 1200px;
+
+    border-radius: 2em;
+    background: rgba(24, 24, 16, .2);
+    border: 2px solid rgba(255, 255, 255, 0.05);
+    background-clip: padding-box;
+    box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+}
+
+main>section {
+    padding: .5em;
+    display: flex;
+    flex-direction: column;
+}
+
+main>section:first-child {border-bottom: 1px solid #7f7f7f;}
+main>section:last-child {position: relative;}
+
+@media (width >= 1024px ) {
+    main>section {height: 100%;}
+    main>section:first-child {
+        width: 30%;
+        border-right: 1px solid #7f7f7f;
+        border-bottom: 0;
+    }
+    
+    main>section:last-child {width: 70%;}
+}
+
+/*? First section */
+/* @see ./messagingList.css */
+
+/*? Second section */
+
+main>section:last-child p.empty {
+    display: none;
+    margin: auto;
+    font-style: italic;
+}
+
+main>section:last-child.is-empty p.empty {display: block;}
+
+main>section:last-child.is-empty .himself,
+main>section:last-child.is-empty .chat,
+main>section:last-child.is-empty .new-message {display: none;}
+
+/*? Second section: chat */
+/* @see ./messagingChat.css */
+
+/*? Second section: call */
+/* @see ./messagingCall.css */
