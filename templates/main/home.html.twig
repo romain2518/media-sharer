@@ -52,8 +52,9 @@
                     </li>
                     {% for conversation in conversations %}
                         {% set otherUserIndex = conversation.users[0].id is same as(app.user.id) ? 1 : 0 %}
+                        {% set currentUserIndex = otherUserIndex is same as(0) ? 1 : 0 %}
                         <li>
-                            <article class="user-card {{ conversation.statuses[otherUserIndex].isRead ? '' : 'has-notification' }}" tabindex="0">
+                            <article class="user-card {{ conversation.statuses[currentUserIndex].isRead ? '' : 'has-notification' }}" tabindex="0" data-user-id="{{ conversation.users[otherUserIndex].id }}">
                                 <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ conversation.users[otherUserIndex].picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
                                 <div class="info-wrapper">
                                     <h3 title="{{ conversation.users[otherUserIndex].pseudo }}">{{ conversation.users[otherUserIndex].pseudo }}</h3>
@@ -68,7 +69,12 @@
                                         <ul>
                                             <li><a href="#"><img src="{{ asset('assets/images/icons/mail-open') }}.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
                                             <li><a href="#"><img src="{{ asset('assets/images/icons/mail.svg') }}" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
-                                            <li><button><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Bloquer</span></button></li>
+                                            <li>
+                                                <button class="WS_CTA" data-action="block" data-targeted-user-id="{{ conversation.users[otherUserIndex].id }}">
+                                                    <img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré">
+                                                    <span>Bloquer</span>
+                                                </button>
+                                            </li>
                                             <li><a href="{{ path('app_user-report_new', {id: conversation.users[otherUserIndex].id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
                                         </ul>
                                     </div>
@@ -85,7 +91,7 @@
                     </li>
                     {% for user in users %}
                         <li>
-                            <article class="user-card">
+                            <article class="user-card" data-user-id="{{ user.id }}">
                                 <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
                                 <div class="info-wrapper">
                                     <h3 title="{{ user.pseudo }}">{{ user.pseudo }}</h3>
@@ -96,7 +102,12 @@
                                     </button>
                                     <div class="dropdown-content">
                                         <ul>
-                                            <li><button><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Bloquer</span></button></li>
+                                            <li>
+                                                <button class="WS_CTA" data-action="block" data-targeted-user-id="{{ user.id }}">
+                                                    <img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré">
+                                                    <span>Bloquer</span>
+                                                </button>
+                                            </li>
                                             <li><a href="{{ path('app_user-report_new', {id: user.id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
                                         </ul>
                                     </div>
@@ -113,7 +124,7 @@
                     </li>
                     {% for blocked_user in blocked_users %}
                         <li>
-                            <article class="user-card">
+                            <article class="user-card" data-user-id="{{ blocked_user.id }}">
                                 <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ blocked_user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
                                 <div class="info-wrapper">
                                     <h3 title="{{ blocked_user.pseudo }}">{{ blocked_user.pseudo }}</h3>
@@ -124,7 +135,12 @@
                                     </button>
                                     <div class="dropdown-content">
                                         <ul>
-                                            <li><button><img src="{{ asset('assets/images/icons/unblock.svg') }}" alt="Rond barré"><span>Débloquer</span></button></li>
+                                            <li>
+                                                <button class="WS_CTA" data-action="unblock" data-targeted-user-id="{{ blocked_user.id }}">
+                                                    <img src="{{ asset('assets/images/icons/unblock.svg') }}" alt="Flèche vers la gauche">
+                                                    <span>Débloquer</span>
+                                                </button>
+                                            </li>
                                             <li><a href="{{ path('app_user-report_new', {id: blocked_user.id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
                                         </ul>
                                     </div>
@@ -139,12 +155,12 @@
     <section class="is-empty">
         <div class="call calling">
             <div class="timer"><img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge"><span>01:34</span></div>
-                <p class="status calling">Tentative d'appel...</p>
-                <p class="status call-canceled">Appel annulé</p>
-                <p class="status incoming-call">Appel entrant...</p>
-                <p class="status call-denied">Appel refusé</p>
-                <p class="status on-call">Appel en cours</p>
-                <p class="status call-ended">Fin d'appel</p>
+            <p class="status calling">Tentative d'appel...</p>
+            <p class="status call-canceled">Appel annulé</p>
+            <p class="status incoming-call">Appel entrant...</p>
+            <p class="status call-denied">Appel refusé</p>
+            <p class="status on-call">Appel en cours</p>
+            <p class="status call-ended">Fin d'appel</p>
             <div class="users">
                 <div class="user">
                     <img src="https://i.pravatar.cc/150?img=3" alt="Photo de profil 1">
@@ -259,9 +275,40 @@
 <input type="hidden" name="block_user_token" value="{{ csrf_token('block user') }}">
 <input type="hidden" name="unblock_user_token" value="{{ csrf_token('unblock user') }}">
 
+<template id="conversation-li-template">
+    <li>
+        <article class="user-card" tabindex="0">
+            <img class="user-pic" src="#" alt="Photo de profil de l'utilisateur">
+            <div class="info-wrapper">
+                <h3 title=""></h3>
+                <p title=""></p>
+            </div>
+            <div class="notification"></div>
+            <div class="dropdown">
+                <button type="button">
+                    <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                </button>
+                <div class="dropdown-content">
+                    <ul>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/mail-open') }}.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
+                        <li><a href="#"><img src="{{ asset('assets/images/icons/mail.svg') }}" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
+                        <li>
+                            <button class="WS_CTA" data-action="block">
+                                <img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré">
+                                <span>Bloquer</span>
+                            </button>
+                        </li>
+                        <li><a class="report-link" href="#"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </li>
+</template>
+
 <script>
     const JWTToken = {{ token|json_encode|raw }};
-    const BASE_URL = '/utilisateurs-bloques';
+    const APP_USER_ID = {{ app.user.id|json_encode|raw }};
 </script>
 {% endblock %}
 

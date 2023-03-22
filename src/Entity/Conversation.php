@@ -32,6 +32,7 @@ class Conversation
     private Collection $messages;
 
     #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Status::class, orphanRemoval: true)]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private Collection $statuses;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'conversations')]

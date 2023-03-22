@@ -41,6 +41,30 @@ class ConversationRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find a conversation between two users (load conversation, statuses & users)
+     * 
+     * @param User $user1
+     * @param User $user2
+     * @return Conversation|null Returns Conversation object or null
+     */
+    public function findOneByUsersLight(User $user1, User $user2): Conversation|null
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect('s, u')
+            ->innerJoin('c.statuses', 's')
+            ->innerJoin('s.user', 'su')
+            ->innerJoin('c.users', 'u')
+            ->andWhere(':user1 MEMBER OF c.users')
+            ->andWhere(':user2 MEMBER OF c.users')
+            ->setParameter('user1', $user1)
+            ->setParameter('user2', $user2)
+            ->addOrderBy('su.id', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
      * Find all conversations that a user have (load conversation, statuses & users)
      * 
      * @param User $user
@@ -48,13 +72,27 @@ class ConversationRepository extends ServiceEntityRepository
      */
     public function findAllByUser(User $user): array
     {
+        $blockedUsersIdSubQuery = $this->_em->createQueryBuilder()
+            ->select('bu.id')
+            ->from('App\Entity\User', 'u2')
+            ->leftJoin('u2.blockedUsers', 'bu')
+            ->where('u2 = :user')
+            ->getDQL();
+        $conversationsWithBlockedUserSubQuery = $this->createQueryBuilder('c2')
+            ->innerJoin('c2.users', 'u3')
+            ->where('u3.id IN (' . $blockedUsersIdSubQuery . ')')
+            ->getDQL();
         return $this->createQueryBuilder('c')
             ->addSelect('s, u')
             ->innerJoin('c.statuses', 's')
+            ->innerJoin('s.user', 'su')
             ->innerJoin('c.users', 'u')
             ->andWhere(':user MEMBER OF c.users')
+            ->andWhere('c NOT IN (' . $conversationsWithBlockedUserSubQuery . ')')
             ->setParameter('user', $user)
             ->orderBy('c.updatedAt', 'DESC')
+            ->addOrderBy('c.createdAt', 'DESC')
+            ->addOrderBy('su.id', 'ASC')
             ->getQuery()
             ->getResult()
         ;

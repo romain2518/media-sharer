@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\StatusRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StatusRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -13,15 +14,19 @@ class Status
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?bool $isRead = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'statuses')]
@@ -30,6 +35,7 @@ class Status
 
     #[ORM\ManyToOne(inversedBy: 'statuses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['api_conversation_list', 'api_conversation_show'])]
     private ?User $user = null;
 
     public function getId(): ?int

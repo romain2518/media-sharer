@@ -11,22 +11,20 @@
 
 ## Espace membre
 
-| URL | Méthodes HTTP | Contrôleur | Méthode |
-|--|--|--|--|
-| /inscription | GET/POST | Registration | register |
-| /verification/email | GET | Registration | verifyUserEmail |
-| /verification/renvoi/{id} | GET | Registration | resendVerifyEmail |
-| /connexion | GET/POST | Security | login |
-| /deconnexion | GET/POST | Security | logout |
-| /modification-du-profil | GET/POST | User | editProfile |
-| /modification-des-identifiants | GET/POST | User | editLogins |
-| /reinitialisation-mdp | GET/POST | ResetPassword | request |
-| /reinitialisation-mdp/check-email | GET/POST | ResetPassword | checkEmail |
-| /reinitialisation-mdp/reset | GET/POST | ResetPassword | reset |
-| /suppression-du-compte | POST | User | delete |
-| /utilisateurs-bloques | GET | User | listBlocked |
-| /utilisateurs-bloques/{id}/ajout | POST | User | block |
-| /utilisateurs-bloques/{id}/suppression | POST | User | unblock |
+| URL | Méthodes HTTP | Contrôleur | Méthode | Commentaire |
+|--|--|--|--|--|
+| /inscription | GET/POST | Registration | register | |
+| /verification/email | GET | Registration | verifyUserEmail | |
+| /verification/renvoi/{id} | GET | Registration | resendVerifyEmail | |
+| /connexion | GET/POST | Security | login | |
+| /deconnexion | GET/POST | Security | logout | |
+| /modification-du-profil | GET/POST | User | editProfile | |
+| /modification-des-identifiants | GET/POST | User | editLogins | |
+| /reinitialisation-mdp | GET/POST | ResetPassword | request | |
+| /reinitialisation-mdp/check-email | GET/POST | ResetPassword | checkEmail | |
+| /reinitialisation-mdp/reset | GET/POST | ResetPassword | reset | |
+| /suppression-du-compte | POST | User | delete | |
+| - | - | User | block | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket |
 
 ## Espace administrateur
 

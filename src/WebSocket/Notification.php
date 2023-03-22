@@ -2,10 +2,12 @@
 
 namespace App\WebSocket;
 
+use App\Controller\UserController;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Security\Exception\WebSocketInvalidRequestException;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Bundle\TimeBundle\DateTimeFormatter;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Ratchet\ConnectionInterface;
@@ -16,6 +18,7 @@ class Notification implements MessageComponentInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $JWTManager,
+        private DateTimeFormatter $dateTimeFormatter,
         private $clients = new \SplObjectStorage,
     ) {
     }
@@ -50,7 +53,7 @@ class Notification implements MessageComponentInterface
         $messageData = json_decode(trim($msg));
 
         if (!isset($messageData->action) || !isset($messageData->data) || !isset($messageData->targetedUserId)) {
-            throw new WebSocketInvalidRequestException();
+            throw new WebSocketInvalidRequestException;
         }
 
         //? Checking user & target user (both must be not null and different from each other)
@@ -58,25 +61,26 @@ class Notification implements MessageComponentInterface
         $targetedUser = $this->getUser($messageData->targetedUserId);
 
         if (null === $user || null === $targetedUser || $user === $targetedUser) {
-            throw new WebSocketInvalidRequestException();
+            throw new WebSocketInvalidRequestException;
         }
 
         //? Dispatching action
         $data = null;
+        $receiversId = [$user->getId()];
 
         switch ($messageData->action) {
-            case 'test':
-                $data = 'Test OK !';
+            case 'block':
+            case 'unblock':
+                $data = UserController::block($messageData->action, $targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
-        }
-
-        if (null === $data) {
-            throw new WebSocketInvalidRequestException();
+            default:
+                throw new WebSocketInvalidRequestException;
+                break;
         }
 
         //? Sending response
         foreach ($this->clients as $client) {
-            if ($client->userId === $targetedUser->getId()) {
+            if (in_array($client->userId, $receiversId)) {
                 $this->send($client, $messageData->action, $data);
             }
         }

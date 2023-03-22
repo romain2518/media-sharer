@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\WebSocket\Notification;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Bundle\TimeBundle\DateTimeFormatter;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Ratchet\Http\HttpServer;
 use Ratchet\Server\IoServer;
@@ -22,6 +23,7 @@ class StartWSServerCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $JWTManager,
+        private DateTimeFormatter $dateTimeFormatter,
     ) {
         parent::__construct();
     }
@@ -34,7 +36,7 @@ class StartWSServerCommand extends Command
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(
-                    new Notification($this->entityManager, $this->JWTManager)
+                    new Notification($this->entityManager, $this->JWTManager, $this->dateTimeFormatter)
                 )
             ),
             $port
