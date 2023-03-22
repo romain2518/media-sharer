@@ -225,7 +225,7 @@ button.list-displayer.show div {transform: rotate(90deg);}
     text-align: center;
 }
 
-.list.is-empty .empty {display: block;}
+.list .empty:last-child {display: block;}
 
 @media (width >= 1024px ) {
     .user-card .dropdown>button {display: none;}

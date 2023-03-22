@@ -45,7 +45,7 @@
             <div>&gt;</div>
         </button>
         <div class="list-container">
-            <div class="chat-list list active {{ conversations ? '' : 'is-empty' }}">
+            <div class="chat-list list active">
                 <ul>
                     <li class="empty">
                         <p>Aucun utilisateur trouvé...</p>
@@ -84,7 +84,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="user-list list {{ users ? '' : 'is-empty' }}">
+            <div class="user-list list">
                 <ul>
                     <li class="empty">
                         <p>Aucun utilisateur trouvé...</p>
@@ -117,7 +117,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="block-list list {{ blocked_users ? '' : 'is-empty' }}">
+            <div class="block-list list">
                 <ul>
                     <li class="empty">
                         <p>Aucun utilisateur trouvé...</p>
