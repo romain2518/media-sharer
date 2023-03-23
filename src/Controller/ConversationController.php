@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Conversation;
+use App\Entity\Status;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
 use App\Security\Exception\WebSocketInvalidRequestException;
@@ -15,14 +16,6 @@ class ConversationController extends WebSocketCoreController
     public static function block(string $action, User $targetedUser, UserInterface $user, EntityManagerInterface $entityManager, DateTimeFormatter $dateTimeFormatter): string
     {
         /** @var User $user */
-
-        if (!in_array($action, ['block', 'unblock'])) {
-            throw new WebSocketInvalidRequestException;
-        }
-
-        if ($targetedUser === $user) {
-            throw new WebSocketInvalidRequestException(sprintf('Vous ne pouvez pas vous %s vous même.', $action === 'block' ? 'bloquer' : 'débloquer'));            
-        }
 
         if ($action === 'block') {
             $user->addBlockedUser($targetedUser);
@@ -54,7 +47,7 @@ class ConversationController extends WebSocketCoreController
 
         $conversation = $conversationRepository->findOneByUsersLight($user, $targetedUser);
 
-        if (!in_array($action, ['setRead', 'setNotRead']) || null === $conversation) {
+        if (null === $conversation) {
             throw new WebSocketInvalidRequestException;
         }
         
