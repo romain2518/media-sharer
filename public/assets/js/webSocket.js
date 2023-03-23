@@ -82,15 +82,35 @@ conn.onmessage = function(e) {
                 conversationElm.querySelector('h3 + p').title = data.updatedAt !== '' ? data.updatedAt : data.createdAt;
                 conversationElm.querySelector('h3 + p').textContent = data.updatedAt !== '' ? data.updatedAt : data.createdAt;
 
-                conversationElm.querySelector('button[data-action="block"]').dataset.targetedUserId = userId;
+                conversationElm.querySelectorAll('.WS_CTA').forEach(buttonElm => {
+                    buttonElm.dataset.targetedUserId = userId;
+                });
                 
                 conversationElm.querySelector('.report-link').href = '/signalement/utilisateur/' + userId;
 
                 // Replacing event listeners
                 conversationElm.querySelector('.dropdown>button').addEventListener('click', handleDropdownBtn);
-                conversationElm.querySelector('.WS_CTA').addEventListener('click', handleWebSocketCTA);
+                conversationElm.querySelectorAll('.WS_CTA').forEach(buttonElm => {
+                    buttonElm.addEventListener('click', handleWebSocketCTA);
+                });
 
                 document.querySelector('.chat-list ul li.empty').after(conversationElm);
+            }
+
+            break;
+        case 'setRead':
+            {
+                const data = JSON.parse(message.data);
+
+                setRead(data);
+            }
+
+            break;
+        case 'setNotRead':
+            {
+                const data = JSON.parse(message.data);
+
+                setNotRead(data);
             }
 
             break;
@@ -113,4 +133,20 @@ const handleWebSocketCTA = function (event) {
         event.currentTarget.dataset.data ?? '',
         event.currentTarget.dataset.targetedUserId ?? '',
     );
+}
+
+function setRead(data) {
+    const otherUserIndex = data.users[0].id === APP_USER_ID ? 1 : 0;
+    const userId = data.users[otherUserIndex].id;
+
+    const conversationElm = document.querySelector(`.chat-list article[data-user-id="${userId}"]`)
+    if (null !== conversationElm) conversationElm.classList.remove('has-notification');
+}
+
+function setNotRead(data) {
+    const otherUserIndex = data.users[0].id === APP_USER_ID ? 1 : 0;
+    const userId = data.users[otherUserIndex].id;
+
+    const conversationElm = document.querySelector(`.chat-list article[data-user-id="${userId}"]`)
+    if (null !== conversationElm) conversationElm.classList.add('has-notification');
 }

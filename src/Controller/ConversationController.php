@@ -45,4 +45,24 @@ class ConversationController extends WebSocketCoreController
 
         return self::serialize($targetedUser, 'api_user_light', $dateTimeFormatter);
     }
+
+    public static function markConversation(string $action, User $targetedUser, UserInterface $user, EntityManagerInterface $entityManager, DateTimeFormatter $dateTimeFormatter): string
+    {
+        /** @var User $user */
+        /** @var ConversationRepository $conversationRepository */
+        $conversationRepository = $entityManager->getRepository(Conversation::class);
+
+        $conversation = $conversationRepository->findOneByUsersLight($user, $targetedUser);
+
+        if (!in_array($action, ['setRead', 'setNotRead']) || null === $conversation) {
+            throw new WebSocketInvalidRequestException;
+        }
+        
+        $statusUserIndex = $conversation->getStatuses()[0]->getUser() === $user ? 0 : 1;
+        $conversation->getStatuses()[$statusUserIndex]->setIsRead($action === 'setRead' ? true : false);
+
+        $entityManager->flush();
+        
+        return self::serialize($conversation, 'api_conversation_light', $dateTimeFormatter);
+    }
 }

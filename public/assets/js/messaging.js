@@ -56,7 +56,7 @@ const handleUserCardClick = function (event) {
     const lastCard = document.querySelector('.user-card.active');
     if (lastCard) lastCard.classList.remove('active');
 
-    event.currentTarget.classList.remove('has-notification');
+    // event.currentTarget.classList.remove('has-notification');
     event.currentTarget.classList.add('active');
 
     document.querySelector('section:last-child').scrollIntoView({ behavior: "smooth", block: "nearest" });

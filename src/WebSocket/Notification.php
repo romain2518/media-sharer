@@ -73,6 +73,10 @@ class Notification implements MessageComponentInterface
             case 'unblock':
                 $data = ConversationController::block($messageData->action, $targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
+            case 'setRead':
+            case 'setNotRead':
+                $data = ConversationController::markConversation($messageData->action, $targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
+                break;
             default:
                 throw new WebSocketInvalidRequestException;
                 break;
