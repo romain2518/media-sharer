@@ -3,18 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Ban;
-use App\Entity\Conversation;
 use App\Entity\User;
 use App\Form\DeleteAccountType;
 use App\Form\EditLoginsType;
 use App\Form\EditProfileType;
-use App\Repository\ConversationRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
-use App\Security\Exception\WebSocketInvalidRequestException;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Bundle\TimeBundle\DateTimeFormatter;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,12 +20,6 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 use Vich\UploaderBundle\Handler\UploadHandler;
 
 class UserController extends AbstractController
@@ -166,57 +155,6 @@ class UserController extends AbstractController
             ],
             $loginsError ? new Response('', Response::HTTP_UNPROCESSABLE_ENTITY) : null,
         );
-    }
-
-    public static function block(string $action, User $targetedUser, UserInterface $user, EntityManagerInterface $entityManager, DateTimeFormatter $dateTimeFormatter): string
-    {
-        /** @var User $user */
-
-        if (!in_array($action, ['block', 'unblock'])) {
-            throw new WebSocketInvalidRequestException;
-        }
-
-        if ($targetedUser === $user) {
-            throw new WebSocketInvalidRequestException(sprintf('Vous ne pouvez pas vous %s vous même.', $action === 'block' ? 'bloquer' : 'débloquer'));            
-        }
-
-        if ($action === 'block') {
-            $user->addBlockedUser($targetedUser);
-        } else {
-            $user->removeBlockedUser($targetedUser);
-        }
-
-        $entityManager->flush();
-
-        //? Normalizing data and returning JSON
-        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-
-        $dateCallback = function ($innerObject) use ($dateTimeFormatter) {
-            return ($innerObject instanceof \DateTime && null !== $innerObject) ? $dateTimeFormatter->formatDiff($innerObject, new \DateTime()) : '';
-        };
-        
-        $defaultContext = [
-            AbstractNormalizer::CALLBACKS => [
-                'createdAt' => $dateCallback,
-                'updatedAt' => $dateCallback,
-            ],
-        ];
-
-        $normalizer = new ObjectNormalizer($classMetadataFactory, defaultContext: $defaultContext);
-        $encoder = new JsonEncoder();
-        $serializer = new Serializer([$normalizer], [$encoder]);
-
-        if ($action === 'unblock') {
-            /** @var ConversationRepository $conversationRepository */
-            $conversationRepository = $entityManager->getRepository(Conversation::class);
-            
-            $conversation = $conversationRepository->findOneByUsersLight($user, $targetedUser);
-            if (null !== $conversation) {
-                return $serializer->serialize($conversation, 'json', ['groups' => 'api_conversation_list']);
-            }            
-        }
-
-        return $serializer->serialize($targetedUser, 'json', ['groups' => 'api_user_light']);
     }
 
     #[Route(' /gestion/utilisateur/{id}/{action}', name: 'app_user_manage',

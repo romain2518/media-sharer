@@ -24,7 +24,6 @@
 | /reinitialisation-mdp/check-email | GET/POST | ResetPassword | checkEmail | |
 | /reinitialisation-mdp/reset | GET/POST | ResetPassword | reset | |
 | /suppression-du-compte | POST | User | delete | |
-| - | - | User | block | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket |
 
 ## Espace administrateur
 
@@ -54,9 +53,10 @@
 
 | URL | Méthodes HTTP | Contrôleur | Méthode | Commentaire |
 |--|--|--|--|--|
-| / | - | Message | home | - |
-| - | - | Message | show | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
-| - | - | Message | new | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
-| - | - | Message | edit | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
-| - | - | Message | markConversation | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
-| - | - | Message | delete | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
+| / | - | Main | home | - |
+| - | - | Conversation | block | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket |
+| - | - | Conversation | markConversation | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
+| - | - | Conversation | show | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
+| - | - | Conversation | new | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
+| - | - | Conversation | edit | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
+| - | - | Conversation | delete | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |

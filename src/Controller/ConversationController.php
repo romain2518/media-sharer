@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Conversation;
+use App\Entity\User;
+use App\Repository\ConversationRepository;
+use App\Security\Exception\WebSocketInvalidRequestException;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Bundle\TimeBundle\DateTimeFormatter;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+class ConversationController extends WebSocketCoreController
+{
+    public static function block(string $action, User $targetedUser, UserInterface $user, EntityManagerInterface $entityManager, DateTimeFormatter $dateTimeFormatter): string
+    {
+        /** @var User $user */
+
+        if (!in_array($action, ['block', 'unblock'])) {
+            throw new WebSocketInvalidRequestException;
+        }
+
+        if ($targetedUser === $user) {
+            throw new WebSocketInvalidRequestException(sprintf('Vous ne pouvez pas vous %s vous même.', $action === 'block' ? 'bloquer' : 'débloquer'));            
+        }
+
+        if ($action === 'block') {
+            $user->addBlockedUser($targetedUser);
+        } else {
+            $user->removeBlockedUser($targetedUser);
+        }
+
+        $entityManager->flush();
+
+        //? Normalizing data and returning JSON
+        if ($action === 'unblock') {
+            /** @var ConversationRepository $conversationRepository */
+            $conversationRepository = $entityManager->getRepository(Conversation::class);
+            
+            $conversation = $conversationRepository->findOneByUsersLight($user, $targetedUser);
+            if (null !== $conversation) {
+                return self::serialize($conversation, 'api_conversation_light', $dateTimeFormatter);
+            }            
+        }
+
+        return self::serialize($targetedUser, 'api_user_light', $dateTimeFormatter);
+    }
+}

@@ -14,19 +14,19 @@ class Status
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['api_conversation_list', 'api_conversation_show'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['api_conversation_list', 'api_conversation_show'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private ?bool $isRead = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['api_conversation_list', 'api_conversation_show'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(['api_conversation_list', 'api_conversation_show'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'statuses')]
@@ -35,7 +35,7 @@ class Status
 
     #[ORM\ManyToOne(inversedBy: 'statuses')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['api_conversation_list', 'api_conversation_show'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private ?User $user = null;
 
     public function getId(): ?int

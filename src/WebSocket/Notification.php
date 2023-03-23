@@ -2,7 +2,7 @@
 
 namespace App\WebSocket;
 
-use App\Controller\UserController;
+use App\Controller\ConversationController;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Security\Exception\WebSocketInvalidRequestException;
@@ -71,7 +71,7 @@ class Notification implements MessageComponentInterface
         switch ($messageData->action) {
             case 'block':
             case 'unblock':
-                $data = UserController::block($messageData->action, $targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
+                $data = ConversationController::block($messageData->action, $targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
             default:
                 throw new WebSocketInvalidRequestException;

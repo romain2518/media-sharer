@@ -15,7 +15,7 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('api_conversation_show')]
+    #[Groups('api_conversation_detailed')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -26,15 +26,15 @@ class Message
         maxMessage: 'Le message doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
-    #[Groups('api_conversation_show')]
+    #[Groups('api_conversation_detailed')]
     private ?string $message = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('api_conversation_show')]
+    #[Groups('api_conversation_detailed')]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups('api_conversation_show')]
+    #[Groups('api_conversation_detailed')]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
@@ -43,7 +43,7 @@ class Message
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('api_conversation_show')]
+    #[Groups('api_conversation_detailed')]
     private ?User $user = null;
 
     public function getId(): ?int
