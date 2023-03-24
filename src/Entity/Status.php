@@ -19,7 +19,7 @@ class Status
 
     #[ORM\Column]
     #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
-    private ?bool $isRead = false;
+    private ?bool $isRead = true;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['api_conversation_light', 'api_conversation_detailed'])]

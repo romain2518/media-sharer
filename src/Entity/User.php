@@ -78,7 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $isVerified = false;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['api_conversation_light', 'api_user_detailed'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed', 'api_user_detailed'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

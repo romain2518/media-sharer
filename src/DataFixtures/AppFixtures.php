@@ -76,7 +76,10 @@ class AppFixtures extends Fixture
         //! Blocked user
         foreach ($users as $user) {
             foreach (array_rand($users, random_int(2, 3)) as $index) {
-                $user->addBlockedUser($users[$index]);
+                // Prevent self blocking
+                if ($users[$index] !== $user) {
+                    $user->addBlockedUser($users[$index]);
+                }
             }
         }
 

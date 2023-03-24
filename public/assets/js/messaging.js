@@ -51,18 +51,6 @@ const handleUserListDisplayerClick = function (event) {
 
 }
 
-//! Click on user card (open a new conversation)
-const handleUserCardClick = function (event) {
-    const lastCard = document.querySelector('.user-card.active');
-    if (lastCard) lastCard.classList.remove('active');
-
-    // event.currentTarget.classList.remove('has-notification');
-    event.currentTarget.classList.add('active');
-
-    document.querySelector('section:last-child').scrollIntoView({ behavior: "smooth", block: "nearest" });
-    document.querySelector('section:last-child').focus();
-}
-
 //! New message textarea
 function getCaretCharacterOffsetWithin(element) {
     let caretOffset = 0;
@@ -164,16 +152,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // List displayer
     document.querySelector('button.list-displayer').addEventListener('click', handleUserListDisplayerClick);
-    
-    // Click on user card (open a new conversation)
-    document.querySelectorAll('.user-card').forEach(card => {
-        card.addEventListener('click', handleUserCardClick);
-    });
 
     // New message textarea
     document.querySelector('.new-message .textarea').addEventListener('beforeinput', handleTextareaBeforeInput);
     document.querySelector('.new-message .textarea').addEventListener('input', resizeMessageList);
-    document.querySelector('.new-message .textarea').dispatchEvent(new Event('input'));
     document.querySelector('.new-message .textarea').addEventListener('focus', handleTextareaFocus);
     document.querySelector('.new-message .textarea').addEventListener('blur', handleTextareaBlur);
     

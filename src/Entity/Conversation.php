@@ -31,7 +31,7 @@ class Conversation
     #[Groups('api_conversation_detailed')]
     private Collection $messages;
 
-    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Status::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Status::class, cascade: ['persist'], orphanRemoval: true)]
     #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private Collection $statuses;
 

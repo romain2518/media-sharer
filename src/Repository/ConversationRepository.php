@@ -65,6 +65,33 @@ class ConversationRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find a conversation between two users (load conversation, statuses, users AND messages)
+     * 
+     * @param User $user1
+     * @param User $user2
+     * @return Conversation|null Returns Conversation object or null
+     */
+    public function findOneByUsersDetailed(User $user1, User $user2): Conversation|null
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect('s, u, m')
+            ->innerJoin('c.statuses', 's')
+            ->innerJoin('s.user', 'su')
+            ->innerJoin('c.users', 'u')
+            ->leftJoin('c.messages', 'm')
+            ->leftJoin('m.user', 'mu')
+            ->andWhere(':user1 MEMBER OF c.users')
+            ->andWhere(':user2 MEMBER OF c.users')
+            ->setParameter('user1', $user1)
+            ->setParameter('user2', $user2)
+            ->addOrderBy('su.id', 'ASC')
+            ->addOrderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
      * Find all conversations that a user have (load conversation, statuses & users)
      * 
      * @param User $user

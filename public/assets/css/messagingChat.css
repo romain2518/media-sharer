@@ -151,6 +151,7 @@
   width: 100%;
   min-height: 75px;
   max-height: 250px;
+  margin-bottom: 3px;
   padding: 1em;
   overflow-y: auto;
   line-height: 20px;

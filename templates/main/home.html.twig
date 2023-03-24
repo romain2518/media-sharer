@@ -54,7 +54,7 @@
                         {% set otherUserIndex = conversation.users[0].id is same as(app.user.id) ? 1 : 0 %}
                         {% set currentUserIndex = otherUserIndex is same as(0) ? 1 : 0 %}
                         <li>
-                            <article class="user-card {{ conversation.statuses[currentUserIndex].isRead ? '' : 'has-notification' }}" tabindex="0" data-user-id="{{ conversation.users[otherUserIndex].id }}">
+                            <article class="user-card WS_CTA {{ conversation.statuses[currentUserIndex].isRead ? '' : 'has-notification' }}" tabindex="0" data-action="show" data-targeted-user-id="{{ conversation.users[otherUserIndex].id }}">
                                 <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ conversation.users[otherUserIndex].picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
                                 <div class="info-wrapper">
                                     <h3 title="{{ conversation.users[otherUserIndex].pseudo }}">{{ conversation.users[otherUserIndex].pseudo }}</h3>
@@ -100,30 +100,32 @@
                         <p>Aucun utilisateur trouvé...</p>
                     </li>
                     {% for user in users %}
-                        <li>
-                            <article class="user-card" data-user-id="{{ user.id }}">
-                                <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
-                                <div class="info-wrapper">
-                                    <h3 title="{{ user.pseudo }}">{{ user.pseudo }}</h3>
-                                </div>
-                                <div class="dropdown">
-                                    <button type="button">
-                                        <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
-                                    </button>
-                                    <div class="dropdown-content">
-                                        <ul>
-                                            <li>
-                                                <button class="WS_CTA" data-action="block" data-targeted-user-id="{{ user.id }}">
-                                                    <img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré">
-                                                    <span>Bloquer</span>
-                                                </button>
-                                            </li>
-                                            <li><a href="{{ path('app_user-report_new', {id: user.id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
-                                        </ul>
+                        {% if user is not same as(app.user) %}
+                            <li>
+                                <article class="user-card WS_CTA" tabindex="0" data-action="show" data-targeted-user-id="{{ user.id }}">
+                                    <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
+                                    <div class="info-wrapper">
+                                        <h3 title="{{ user.pseudo }}">{{ user.pseudo }}</h3>
                                     </div>
-                                </div>
-                            </article>
-                        </li>
+                                    <div class="dropdown">
+                                        <button type="button">
+                                            <img src="{{ asset('assets/images/icons/options.svg') }}" alt="Bouton de menu dépliant">
+                                        </button>
+                                        <div class="dropdown-content">
+                                            <ul>
+                                                <li>
+                                                    <button class="WS_CTA" data-action="block" data-targeted-user-id="{{ user.id }}">
+                                                        <img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré">
+                                                        <span>Bloquer</span>
+                                                    </button>
+                                                </li>
+                                                <li><a href="{{ path('app_user-report_new', {id: user.id}) }}"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </article>
+                            </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div>
@@ -134,7 +136,7 @@
                     </li>
                     {% for blocked_user in blocked_users %}
                         <li>
-                            <article class="user-card" data-user-id="{{ blocked_user.id }}">
+                            <article class="user-card WS_CTA" tabindex="0" data-action="show" data-targeted-user-id="{{ blocked_user.id }}">
                                 <img class="user-pic" src="{{ asset('assets/images/userPictures/' ~ blocked_user.picturePath ?? '0.svg') }}" alt="Photo de profil de l'utilisateur">
                                 <div class="info-wrapper">
                                     <h3 title="{{ blocked_user.pseudo }}">{{ blocked_user.pseudo }}</h3>
@@ -206,10 +208,10 @@
             </div>
         </div>
         <header class="himself">
-            <img class="profile-pic" src="https://i.pravatar.cc/150?img=1" alt="Photo de profil">
+            <img class="profile-pic" src="#" alt="Photo de profil">
             <div class="info-wrapper">
-                <h2>Pseudo</h2>
-                <p>Inscrit le 24 Février 2023</p>
+                <h2></h2>
+                <p></p>
             </div>
             <div class="actions">
                 <button title="Démarrer un appel"><img src="{{ asset('assets/images/icons/phone.svg') }}" alt="Démarrer un appel"></button>
@@ -221,51 +223,38 @@
                 </button>
                 <div class="dropdown-content">
                     <ul>
-                        <li><a href="#"><img src="{{ asset('assets/images/icons/mail-open') }}.svg" alt="Enveloppe ouverte"><span>Marquer comme lu</span></a></li>
-                        <li><a href="#"><img src="{{ asset('assets/images/icons/mail.svg') }}" alt="Enveloppe"><span>Marquer comme non-lu</span></a></li>
-                        <li><a href="#"><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Bloquer</span></a></li>
-                        <li><a href="#"><img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré"><span>Débloquer</span></a></li>
-                        <li><a href="#"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
+                        <li>
+                            <button class="WS_CTA" data-action="setRead">
+                                <img src="{{ asset('assets/images/icons/mail-open') }}.svg" alt="Enveloppe ouverte">
+                                <span>Marquer comme lu</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="WS_CTA" data-action="setNotRead">
+                                <img src="{{ asset('assets/images/icons/mail.svg') }}" alt="Enveloppe">
+                                <span>Marquer comme non-lu</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="WS_CTA" data-action="block">
+                                <img src="{{ asset('assets/images/icons/block.svg') }}" alt="Rond barré">
+                                <span>Bloquer</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="WS_CTA" data-action="unblock">
+                                <img src="{{ asset('assets/images/icons/unblock.svg') }}" alt="Flèche vers la gauche">
+                                <span>Débloquer</span>
+                            </button>
+                        </li>
+                        <li><a class="report-link" href="#"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
                     </ul>
                 </div>
             </div>
         </header>
         <div class="chat">
+            <!-- Message list -->
             <ul>
-                <li>
-                    <article class="message-card him">
-                        <img src="https://i.pravatar.cc/150?img=1" alt="">
-                        <div class="message-wrapper">
-                            <div class="info">
-                                <p class="pseudo">Pseudo 1</p>
-                                <div class="date">
-                                    <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
-                                    <p>Hier</p>
-                                </div>
-                            </div>
-                            <div class="message">
-                                <p>Lorem, ipsum.</p>
-                            </div>
-                        </div>
-                    </article>
-                </li>
-                <li>
-                    <article class="message-card">
-                        <img src="https://i.pravatar.cc/150?img=3" alt="">
-                        <div class="message-wrapper">
-                            <div class="info">
-                                <p class="pseudo">Pseudo 3</p>
-                                <div class="date">
-                                    <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
-                                    <p>Hier</p>
-                                </div>
-                            </div>
-                            <div class="message">
-                                <p>Lorem, ipsum.</p>
-                            </div>
-                        </div>
-                    </article>
-                </li>
             </ul>
         </div>
         <div class="new-message">
@@ -287,7 +276,7 @@
 
 <template id="conversation-li-template">
     <li>
-        <article class="user-card" tabindex="0">
+        <article class="user-card WS_CTA" tabindex="0" data-action="show">
             <img class="user-pic" src="#" alt="Photo de profil de l'utilisateur">
             <div class="info-wrapper">
                 <h3 title=""></h3>
@@ -320,6 +309,26 @@
                         </li>
                         <li><a class="report-link" href="#"><img src="{{ asset('assets/images/icons/flag.svg') }}" alt="Drapeau"><span>Signaler</span></a></li>
                     </ul>
+                </div>
+            </div>
+        </article>
+    </li>
+</template>
+
+<template id="message-li-template">
+    <li>
+        <article class="message-card">
+            <img class="profile-pic" src="#" alt="Photo de profil">
+            <div class="message-wrapper">
+                <div class="info">
+                    <p class="pseudo"></p>
+                    <div class="date">
+                        <img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge">
+                        <p></p>
+                    </div>
+                </div>
+                <div class="message">
+                    <p></p>
                 </div>
             </div>
         </article>

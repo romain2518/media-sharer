@@ -33,13 +33,13 @@ class Notification implements MessageComponentInterface
         try {
             $payload = $this->JWTManager->decode($token);
         } catch (\Exception $e) {
-            throw new WebSocketInvalidRequestException();            
+            throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);            
         }
 
         $user = $this->getUserByEmail($payload['username']);
 
         if (null === $user) {
-            throw new WebSocketInvalidRequestException();
+            throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);
         }
 
         $conn->userId = $user->getId();
@@ -53,14 +53,19 @@ class Notification implements MessageComponentInterface
         $messageData = json_decode(trim($msg));
 
         if (!isset($messageData->action) || !isset($messageData->data) || !isset($messageData->targetedUserId)) {
-            throw new WebSocketInvalidRequestException;
+            throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);
         }
 
         //? Checking user & target user (both must be not null and different from each other)
         $user = $this->getUser($from->userId);
         $targetedUser = $this->getUser($messageData->targetedUserId);
 
-        if (null === $user || null === $targetedUser || $user === $targetedUser) {
+        if (null === $user) {
+            // Throw fatal error if current user has been deleted
+            throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);
+        }
+
+        if (null === $targetedUser || $user === $targetedUser) {
             throw new WebSocketInvalidRequestException;
         }
 
@@ -76,6 +81,9 @@ class Notification implements MessageComponentInterface
             case 'setRead':
             case 'setNotRead':
                 $data = ConversationController::markConversation($messageData->action, $targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
+                break;
+            case 'show':
+                $data = ConversationController::show($targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
             default:
                 throw new WebSocketInvalidRequestException;
@@ -99,9 +107,14 @@ class Notification implements MessageComponentInterface
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "An error has occurred: {$e->getMessage()}\n";
-        $this->send($conn, 'error', $e->getMessage());
+        if ($e instanceof WebSocketInvalidRequestException && !$e->isFatal()) {
+            $this->send($conn, 'error', "{\"message\":\"{$e->getMessage()}\"}");
+            return;
+        }
+        
+        $this->send($conn, 'fatalError', "{\"message\":\"{$e->getMessage()}\"}");
         $conn->close();
+        echo "An error has occurred: {$e->getMessage()}\n";
     }
 
     /**
