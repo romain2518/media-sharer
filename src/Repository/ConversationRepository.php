@@ -78,10 +78,20 @@ class ConversationRepository extends ServiceEntityRepository
             ->leftJoin('u2.blockedUsers', 'bu')
             ->where('u2 = :user')
             ->getDQL();
+
         $conversationsWithBlockedUserSubQuery = $this->createQueryBuilder('c2')
             ->innerJoin('c2.users', 'u3')
             ->where('u3.id IN (' . $blockedUsersIdSubQuery . ')')
             ->getDQL();
+
+        $conversationsWithMoreThanZeroMessageSubQuery = $this->createQueryBuilder('c3')
+            // Doing an inner join on messages is enough to select only conversations with more than 0 messages
+            // since conversation with 0 messages won't be joined
+            ->innerJoin('c3.messages', 'm')
+            ->innerJoin('c3.users', 'u4')
+            ->where(':user MEMBER OF c3.users')
+            ->getDQL();
+
         return $this->createQueryBuilder('c')
             ->addSelect('s, u')
             ->innerJoin('c.statuses', 's')
@@ -89,6 +99,7 @@ class ConversationRepository extends ServiceEntityRepository
             ->innerJoin('c.users', 'u')
             ->andWhere(':user MEMBER OF c.users')
             ->andWhere('c NOT IN (' . $conversationsWithBlockedUserSubQuery . ')')
+            ->andWhere('c IN (' . $conversationsWithMoreThanZeroMessageSubQuery . ')')
             ->setParameter('user', $user)
             ->orderBy('c.updatedAt', 'DESC')
             ->addOrderBy('c.createdAt', 'DESC')
