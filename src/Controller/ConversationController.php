@@ -65,6 +65,11 @@ class ConversationController extends WebSocketCoreController
         /** @var ConversationRepository $conversationRepository */
         $conversationRepository = $entityManager->getRepository(Conversation::class);
 
+        // Throws error if targeted user is blocked by logged user
+        if ($user->getBlockedUsers()->contains($targetedUser)) {
+            throw new WebSocketInvalidRequestException('Vous ne pouvez pas afficher la discussion d\'un utilisateur bloqué.');
+        }
+
         $conversation = $conversationRepository->findOneByUsersDetailed($user, $targetedUser);
         if (null === $conversation) {
             $conversation = new Conversation();
