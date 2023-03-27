@@ -29,51 +29,10 @@ conn.onmessage = function(e) {
             fatalErrorMessage = data.message;
             break;
         case 'block':
-            {
-                const conversationElm = document.querySelector(`.chat-list article[data-targeted-user-id="${data.id}"]`)
-                if (null !== conversationElm) conversationElm.closest('li').remove();
-                
-                const userElm = document.querySelector(`.user-list article[data-targeted-user-id="${data.id}"]`)
-                if (null === userElm) return;
-                const userLiElm = userElm.closest('li');
-                if (null !== userLiElm) userLiElm.remove();
-
-                // Change block button to unblock button
-                userElm.querySelector('button[data-action="block"] span').textContent = 'Débloquer';
-                userElm.querySelector('button[data-action="block"]').dataset.action = 'unblock';
-
-                // Insert element in block list after .empty element
-                document.querySelector('.block-list ul li.empty').after(userLiElm);
-            }
-
+            block(data);
             break;
         case 'unblock':
-            {
-                let userId = data.id;
-                let otherUserIndex, currentUserIndex;
-                if (typeof data.users !== 'undefined') {
-                    [otherUserIndex, currentUserIndex] = data.users[0].id === APP_USER_ID ? [1, 0] : [0, 1];
-                    
-                    userId = data.users[otherUserIndex].id;
-                }
-
-                const blockedUserElm = document.querySelector(`.block-list article[data-targeted-user-id="${userId}"]`)
-                const blockedUserLiElm = blockedUserElm.closest('li');
-                if (null !== blockedUserElm) blockedUserLiElm.remove();
-                
-                // Change unblock button to block button
-                blockedUserElm.querySelector('button[data-action="unblock"] span').textContent = 'Bloquer';
-                blockedUserElm.querySelector('button[data-action="unblock"]').dataset.action = 'block';
-                
-                // Insert element in user list after .empty element
-                document.querySelector('.user-list ul li.empty').after(blockedUserLiElm);
-
-                // Clone & insert element in chat list if needed
-                if (typeof data.users === 'undefined') return;
-
-                createConversationElm(data, otherUserIndex, currentUserIndex);
-            }
-
+            unblock(data);
             break;
         case 'setRead':
             setRead(data);
@@ -159,6 +118,50 @@ function createMessageElm(message, otherUserId) {
 
 function displayError(data) {
     alert('Erreur : ' + data.message);
+}
+
+function block(data) {
+    const conversationElm = document.querySelector(`.chat-list article[data-targeted-user-id="${data.id}"]`);
+    if (null !== conversationElm) conversationElm.closest('li').remove();
+    
+    const userElm = document.querySelector(`.user-list article[data-targeted-user-id="${data.id}"]`);
+    if (null === userElm) return;
+    const userLiElm = userElm.closest('li');
+    if (null !== userLiElm) userLiElm.remove();
+
+    // Change block button to unblock button
+    userElm.querySelector('button[data-action="block"] span').textContent = 'Débloquer';
+    userElm.querySelector('button[data-action="block"]').dataset.action = 'unblock';
+
+    // Insert element in block list after .empty element
+    document.querySelector('.block-list ul li.empty').after(userLiElm);
+}
+
+function unblock(data) {
+    let userId = data.id;
+    let otherUserIndex, currentUserIndex;
+    if (typeof data.users !== 'undefined') {
+        [otherUserIndex, currentUserIndex] = data.users[0].id === APP_USER_ID ? [1, 0] : [0, 1];
+        
+        userId = data.users[otherUserIndex].id;
+    }
+
+    const blockedUserElm = document.querySelector(`.block-list article[data-targeted-user-id="${userId}"]`);
+    if (null === blockedUserElm) return;
+    const blockedUserLiElm = blockedUserElm.closest('li');
+    if (null !== blockedUserElm) blockedUserLiElm.remove();
+    
+    // Change unblock button to block button
+    blockedUserElm.querySelector('button[data-action="unblock"] span').textContent = 'Bloquer';
+    blockedUserElm.querySelector('button[data-action="unblock"]').dataset.action = 'block';
+    
+    // Insert element in user list after .empty element
+    document.querySelector('.user-list ul li.empty').after(blockedUserLiElm);
+
+    // Clone & insert element in chat list if needed
+    if (typeof data.users === 'undefined') return;
+
+    createConversationElm(data, otherUserIndex, currentUserIndex);
 }
 
 function setRead(data) {
