@@ -121,6 +121,12 @@ function displayError(data) {
 }
 
 function block(data) {
+    // Close chat box if loaded user is the blocked one
+    if (data.id == document.querySelector('section:last-child').dataset.loadedUserId) {
+        document.querySelector('section:last-child').classList.add('is-empty');
+        delete document.querySelector('section:last-child').dataset.loadedUserId;
+    }
+
     const conversationElm = document.querySelector(`.chat-list article[data-targeted-user-id="${data.id}"]`);
     if (null !== conversationElm) conversationElm.closest('li').remove();
     
@@ -214,10 +220,10 @@ function show(data) {
 
     // Fill chat section with new datas
     document.querySelector('section:last-child').classList.remove('is-empty');
+    document.querySelector('section:last-child').dataset.loadedUserId = otherUserId;
 
     const himselfElm = document.querySelector('.himself');
 
-    himselfElm.dataset.loadedUserId = otherUserId;
 
     himselfElm.querySelector('.profile-pic').src = 'assets/images/userPictures/' + data.users[otherUserIndex].picturePath ?? '0.svg';
     himselfElm.querySelector('h2').textContent = data.users[otherUserIndex].pseudo;
