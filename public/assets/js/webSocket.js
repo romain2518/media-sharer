@@ -58,7 +58,11 @@ function send (action, data, targetedUserId) {
 
 const handleWebSocketCTA = function (event) {
     // Prevent from trying to reload already loaded data, which can take a long time with a bad connection
-    if (event.currentTarget.dataset.action === 'show' && event.currentTarget.dataset.targetedUserId === document.querySelector('.himself').dataset.loadedUserId) return;
+    //              loading data when clicking on dropdown button
+    if (
+        event.currentTarget.dataset.action === 'show' && event.currentTarget.dataset.targetedUserId === document.querySelector('section:last-child').dataset.loadedUserId
+        || event.currentTarget.dataset.action === 'show' && event.target.closest('article').querySelector('.dropdown').contains(event.target)
+        ) return;
 
     send(
         event.currentTarget.dataset.action,
