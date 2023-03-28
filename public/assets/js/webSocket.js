@@ -47,6 +47,9 @@ conn.onmessage = function(e) {
         case 'new':
             newMessage(data);
             break;
+        case 'delete':
+            deleteMessage(data);
+            break;
     }
 };
 
@@ -104,6 +107,21 @@ const handleClickWithinChatSection = function (event) {
     ) send('setRead', '', loadedUserId);
 }
 
+const handleDeleteMessage = function (event) {
+    const messageElm = event.currentTarget.closest('article');
+
+    send(
+        'delete', 
+        JSON.stringify({id: messageElm.dataset.id}),
+        document.querySelector('section:last-child').dataset.loadedUserId
+    );
+
+    messageElm.value = '';
+
+    // Dispatch input event resizes message list
+    document.querySelector('.new-message textarea').dispatchEvent(new Event('input'));
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#send-message').addEventListener('click', handleSendMessage);
     document.querySelector('.new-message textarea').addEventListener('keydown', function (keyEvent) {
@@ -154,8 +172,10 @@ function createMessageElm(message, otherUserId, first = false) {
     if (message.user.id === otherUserId)
         newMessageElm.querySelector('article').classList.add('him');
     
+    newMessageElm.querySelector('article').dataset.id = message.id;
     newMessageElm.querySelector('.profile-pic').src = 'assets/images/userPictures/' + message.user.picturePath ?? '0.svg';
     newMessageElm.querySelector('.pseudo').textContent = message.user.pseudo;
+    newMessageElm.querySelector('.delete-message').addEventListener('click', handleDeleteMessage);
     newMessageElm.querySelector('.date p').textContent = '' !== message.updatedAt ? message.updatedAt + ' (modifié)' : message.createdAt;
 
     newMessageElm.querySelector('.message').textContent = message.message;
@@ -270,10 +290,6 @@ function show(data) {
     // Set conversation to read since it is being read
     if (null !== conversationElm) conversationElm.classList.remove('has-notification');
 
-    // For mobile devices : scroll to the chat section
-    document.querySelector('section:last-child').scrollIntoView({ behavior: "smooth", block: "nearest" });
-    document.querySelector('section:last-child').focus();
-
     // Fill chat section with new datas
     document.querySelector('section:last-child').classList.remove('is-empty');
     document.querySelector('section:last-child').dataset.loadedUserId = otherUserId;
@@ -305,6 +321,10 @@ function show(data) {
 
     document.querySelector('.new-message textarea').classList.remove('active');
     document.querySelector('.new-message textarea').value = '';
+
+    // For mobile devices : scroll to the chat section
+    document.querySelector('section:last-child').scrollIntoView({ behavior: "smooth", block: "nearest" });
+    document.querySelector('section:last-child').focus();
 }
 
 function newMessage(data) {
@@ -336,5 +356,16 @@ function newMessage(data) {
     // If loaded user is other user add message
     if (otherUserId == document.querySelector('section:last-child').dataset.loadedUserId)
         createMessageElm(data.messages[0], otherUserId, true);
+}
+
+function deleteMessage(data) {
+    const otherUserIndex = data.conversation.users[0].id === APP_USER_ID ? 1 : 0;
+    const otherUserId = data.conversation.users[otherUserIndex].id;
+
+    // If conversation is loaded remove message
+    if (otherUserId != document.querySelector('section:last-child').dataset.loadedUserId) return;
+    
+    const messageElm = document.querySelector(`.message-card[data-id="${data.id}"]`);
+    if (null !== messageElm) messageElm.remove();
 }
 //#endregion

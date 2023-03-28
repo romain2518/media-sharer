@@ -58,5 +58,4 @@
 | - | - | Conversation | markConversation | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
 | - | - | Conversation | show | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
 | - | - | Conversation | new | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
-| - | - | Conversation | edit | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |
 | - | - | Conversation | delete | Cette route n'a ni URL ni méthode HTTP car elle sera utilisée par le websocket  |

@@ -93,21 +93,25 @@
     border-bottom-left-radius: 15px;
 }
 
-.message-card p {margin: 0;}
-
 .message-card .info {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-bottom: 1em;
 }
 
+.message-card .info>* {
+    margin: auto 0;
+}
+
 .message-card .pseudo {
+    margin: 0 auto 0 0;
     font-weight: bold;
 }
 
 .message-card .date {display: flex;}
 
 .message-card .date p {
+    margin: 0;
     color: #dfd7d5;
     font-weight: lighter;
     font-style: italic;
@@ -116,12 +120,38 @@
 .message-card .date img {
     width: 20px;
     height: 20px;
-    margin-right: .25em;
+    margin: 0 .25em;
     filter: brightness(0) saturate(100%) invert(94%) sepia(13%) saturate(90%) hue-rotate(325deg) brightness(93%) contrast(89%);
 }
 
+.message-card .delete-message {
+    margin-left: .25em;
+    border: 0;
+    padding: 0;
+    background: unset;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    transition: transform .2s;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(39%) saturate(7496%) hue-rotate(1deg) brightness(93%) contrast(118%);
+}
+
+.message-card .delete-message:hover,
+.message-card .delete-message:focus,
+.message-card .delete-message:active {
+    filter: brightness(0) saturate(100%) invert(8%) sepia(67%) saturate(7492%) hue-rotate(359deg) brightness(91%) contrast(108%);
+    transform: scale(1.1) rotate(3deg);
+}
+
+.message-card.him .delete-message {display: none;}
+
+.message-card .delete-message img {
+    width: 100%;
+    height: 100%;
+}
+
 .message-card .message {
-    white-space: pre-line;
+    white-space: pre-wrap;
     overflow-wrap: break-word;
 
 }

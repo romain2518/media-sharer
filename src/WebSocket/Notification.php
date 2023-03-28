@@ -71,7 +71,7 @@ class Notification implements MessageComponentInterface
             throw new WebSocketInvalidRequestException;
         }
 
-        if (in_array($messageData->action, ['new'])) {
+        if (in_array($messageData->action, ['new', 'delete'])) {
             $messageData->data = json_decode($messageData->data);
             if (null === $messageData) {throw new WebSocketInvalidRequestException;}
         }
@@ -99,7 +99,18 @@ class Notification implements MessageComponentInterface
 
                 [$data, $sendToTarget] = ConversationController::new($targetedUser, $user, $messageData->data->message, $this->entityManager, $this->validator, $this->dateTimeFormatter);
 
-                // On success message is also sent to targeted user
+                if ($sendToTarget) {
+                    $receiversId[] = $targetedUser->getId();
+                }
+                
+                break;
+            case 'delete':
+                if (empty($messageData->data->id)) {
+                    throw new WebSocketInvalidRequestException;
+                }
+
+                [$data, $sendToTarget] = ConversationController::delete($targetedUser, $user, $messageData->data->id, $this->entityManager, $this->dateTimeFormatter);
+
                 if ($sendToTarget) {
                     $receiversId[] = $targetedUser->getId();
                 }

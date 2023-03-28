@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,7 +16,7 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('api_conversation_detailed')]
+    #[Groups(['api_message', 'api_conversation_detailed'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -26,25 +27,31 @@ class Message
         maxMessage: 'Le message doit contenir au maximum {{ limit }} caractères.',
     )]
     #[Assert\NotBlank(message: 'Cette valeur est obligatoire.')]
-    #[Groups('api_conversation_detailed')]
+    #[Groups(['api_message', 'api_conversation_detailed'])]
     private ?string $message = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups('api_conversation_detailed')]
+    #[Groups(['api_message', 'api_conversation_detailed'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups('api_conversation_detailed')]
+    #[Groups(['api_message', 'api_conversation_detailed'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('api_message')]
     private ?Conversation $conversation = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('api_conversation_detailed')]
+    #[Groups(['api_message', 'api_conversation_detailed'])]
     private ?User $user = null;
+
+    /**
+     * Used when deleting entity in order to set back the historical id (which is removed after deletion).
+     */
+    private ?int $historicalId = null;
 
     public function getId(): ?int
     {
@@ -120,5 +127,16 @@ class Message
         $this->user = $user;
 
         return $this;
+    }
+
+    #[ORM\PreRemove]
+    public function preRemove(LifecycleEventArgs $args): void {
+        $message = $args->getObject();
+        $this->historicalId = $message->getId();
+    }
+    
+    #[ORM\PostRemove]
+    public function postRemove(): void {
+        $this->id = $this->historicalId;
     }
 }

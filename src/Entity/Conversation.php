@@ -16,15 +16,15 @@ class Conversation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed', 'api_message'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed', 'api_message'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed', 'api_message'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, cascade: ['persist'], orphanRemoval: true)]
@@ -36,7 +36,7 @@ class Conversation
     private Collection $statuses;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'conversations')]
-    #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
+    #[Groups(['api_conversation_light', 'api_conversation_detailed', 'api_message'])]
     private Collection $users;
 
     public function __construct()

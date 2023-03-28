@@ -7,6 +7,7 @@ use App\Entity\Message;
 use App\Entity\Status;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
+use App\Repository\MessageRepository;
 use App\Security\Exception\WebSocketInvalidRequestException;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\TimeBundle\DateTimeFormatter;
@@ -144,5 +145,43 @@ class ConversationController extends WebSocketCoreController
 
         
         return [self::serialize($reorderedConversation, 'api_conversation_detailed', $dateTimeFormatter), $sendToTarget];
+    }
+
+    /**
+     * @return array [string $jsonResponse, bool $sendToTarget]
+     */
+    public static function delete(User $targetedUser, UserInterface $user, int $messageId, EntityManagerInterface $entityManager, DateTimeFormatter $dateTimeFormatter): array
+    {
+        /** @var User $user */
+        /** @var ConversationRepository $conversationRepository */
+        $conversationRepository = $entityManager->getRepository(Conversation::class);
+        
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $entityManager->getRepository(Message::class);
+
+        // Throws error if targeted user is blocked by logged user
+        if ($user->getBlockedUsers()->contains($targetedUser)) {
+            throw new WebSocketInvalidRequestException('Vous ne pouvez pas accéder à une conversation avec un utilisateur bloqué.');
+        }
+
+        $conversation = $conversationRepository->findOneByUsersDetailed($user, $targetedUser);
+        $message = $messageRepository->find($messageId);
+
+        // Throws error If conversation or message is null, 
+        //              If message is not from conversation,
+        //              If user is not the sender of the message
+        if (
+            null === $conversation || null === $message 
+            || $conversation !== $message->getConversation()
+            || $user !== $message->getUser()
+            ) {
+            throw new WebSocketInvalidRequestException;
+        }
+
+        $messageRepository->remove($message, true);
+        
+        $sendToTarget = !$targetedUser->getBlockedUsers()->contains($user);
+
+        return [self::serialize($message, 'api_message', $dateTimeFormatter), $sendToTarget];
     }
 }
