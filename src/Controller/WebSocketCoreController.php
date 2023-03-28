@@ -10,6 +10,7 @@ use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class WebSocketCoreController
 {
@@ -41,5 +42,21 @@ class WebSocketCoreController
         $serializer = new Serializer([$normalizer], [$encoder]);
 
         return $serializer->serialize($data, 'json', ['groups' => $group]);
+    }
+
+    /**
+     * Serialize constraint violation list into array of error message
+     *
+     * @param ConstraintViolationListInterface $errors
+     * @return string
+     */
+    protected static function serializeErrors(ConstraintViolationListInterface $errors): string
+    {
+        $errorMessages = [];
+        foreach ($errors as $error) {
+            $errorMessages[] = $error->getMessage();
+        }
+
+        return json_encode($errorMessages);
     }
 }

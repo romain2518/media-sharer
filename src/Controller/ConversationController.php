@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Conversation;
+use App\Entity\Message;
 use App\Entity\Status;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
@@ -10,6 +11,7 @@ use App\Security\Exception\WebSocketInvalidRequestException;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\TimeBundle\DateTimeFormatter;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ConversationController extends WebSocketCoreController
 {
@@ -90,5 +92,57 @@ class ConversationController extends WebSocketCoreController
         $entityManager->flush();
         
         return self::serialize($conversation, 'api_conversation_detailed', $dateTimeFormatter);
+    }
+
+    /**
+     * @return array [string $jsonResponse, bool $sendToTarget]
+     */
+    public static function new(User $targetedUser, UserInterface $user, string $message, EntityManagerInterface $entityManager, ValidatorInterface $validator, DateTimeFormatter $dateTimeFormatter): array
+    {
+        /** @var User $user */
+        /** @var ConversationRepository $conversationRepository */
+        $conversationRepository = $entityManager->getRepository(Conversation::class);
+
+        // Throws error if targeted user is blocked by logged user
+        if ($user->getBlockedUsers()->contains($targetedUser)) {
+            throw new WebSocketInvalidRequestException('Vous ne pouvez pas envoyer de message à un utilisateur bloqué.');
+        }
+
+        $conversation = $conversationRepository->findOneByUsersDetailed($user, $targetedUser);
+        if (null === $conversation || '' === trim($message)) {
+            throw new WebSocketInvalidRequestException;
+        }
+
+        // Creating object
+        $newMessage = new Message();
+        $newMessage
+            ->setMessage($message)
+            ->setUser($user)
+        ;
+
+        $errors = $validator->validate($newMessage);
+        if (count($errors) > 0) {
+            return [self::serializeErrors($errors), false];
+        }
+
+        $conversation
+            ->addMessage($newMessage)
+            ->setUpdatedAt(new \DateTime('now'))
+        ;
+        
+        // Mark conversation has unread for targeted user
+        $statusUserIndex = $conversation->getStatuses()[0]->getUser() === $targetedUser ? 0 : 1;
+        $conversation->getStatuses()[$statusUserIndex]->setIsRead(false);
+
+        $entityManager->flush();
+
+        $sendToTarget = !$targetedUser->getBlockedUsers()->contains($user);
+
+        // Entity manager cache needs be cleared to reorder & update $conversation 
+        $entityManager->clear();
+        $reorderedConversation = $conversationRepository->findOneByUsersDetailed($user, $targetedUser);
+
+        
+        return [self::serialize($reorderedConversation, 'api_conversation_detailed', $dateTimeFormatter), $sendToTarget];
     }
 }

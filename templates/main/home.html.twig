@@ -253,12 +253,12 @@
         </div>
         <div class="new-message">
             <div class="textarea-wrapper">
-                <span class="textarea" role="textbox" contenteditable></span>
+                <textarea maxlength="255"></textarea>
                 <span class="placeholder">Message...</span>
                 <div class="bar"></div>
             </div>
             <div class="button-wrapper">
-                <button title="Envoyer le message"><img src="{{ asset('assets/images/icons/send.svg') }}" alt="Envoyer le message"></button>
+                <button id="send-message" title="Envoyer le message"><img src="{{ asset('assets/images/icons/send.svg') }}" alt="Envoyer le message"></button>
             </div>
         </div>
         <p class="empty">Choisissez un utilisateur avec qui discuter...</p>

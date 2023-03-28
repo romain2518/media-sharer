@@ -52,58 +52,12 @@ const handleUserListDisplayerClick = function (event) {
 }
 
 //! New message textarea
-function getCaretCharacterOffsetWithin(element) {
-    let caretOffset = 0;
-    const doc = element.ownerDocument || element.document;
-    const win = doc.defaultView || doc.parentWindow;
-    let sel;
-    if (typeof win.getSelection != "undefined") {
-        sel = win.getSelection();
-        if (sel.rangeCount > 0) {
-            const range = win.getSelection().getRangeAt(0);
-            const preCaretRange = range.cloneRange();
-            preCaretRange.selectNodeContents(element);
-            preCaretRange.setEnd(range.endContainer, range.endOffset);
-            caretOffset = preCaretRange.toString().length;
-        }
-    } else if ((sel = doc.selection) && sel.type != "Control") {
-        const textRange = sel.createRange();
-        const preCaretTextRange = doc.body.createTextRange();
-        preCaretTextRange.moveToElementText(element);
-        preCaretTextRange.setEndPoint("EndToEnd", textRange);
-        caretOffset = preCaretTextRange.text.length;
-    }
-    return caretOffset;
-}  
-
-const handleTextareaBeforeInput = function (event) {
-    if (!event.inputType.match(/^insert(?!Text)[A-Za-z]+$/)) return; // If event type is an insert but not insertText (paste, drop etc.)
-    event.preventDefault();
-
-    // Add text in plain text
-    const caretPos = getCaretCharacterOffsetWithin(event.currentTarget);
-    const textToAdd = event.dataTransfer.getData('text/plain');
-
-    event.currentTarget.textContent = 
-        event.currentTarget.textContent.slice(0, caretPos)
-        + textToAdd
-        + event.currentTarget.textContent.slice(caretPos);
-
-    // Set back carret
-    const range = document.createRange();
-    const sel = window.getSelection();
-    
-    range.setStart(event.currentTarget.childNodes[0], caretPos + textToAdd.length);
-    range.collapse(true);
-    
-    sel.removeAllRanges();
-    sel.addRange(range);
-
-    // Trigger input event to resize the message list
-    event.currentTarget.dispatchEvent(new Event('input'));
+const resizeMessageTextarea = function (event) {
+    event.currentTarget.style.height = 'auto';
+    event.currentTarget.style.height = event.currentTarget.scrollHeight + 'px';
 }
 
-const resizeMessageList = function (event) {
+const resizeMessageList = function () {
     // Resize message liste based on textarea height
     const
         himselfHeight = document.querySelector('.himself').offsetHeight,
@@ -121,12 +75,12 @@ const handleTextareaFocus = function (event) {
 }
 
 const handleTextareaBlur = function (event) {
-    if (event.currentTarget.textContent !== '') return;
+    if (event.currentTarget.value !== '') return;
     event.currentTarget.classList.remove('active');
 }
 
 const handleTextareaPlaceholderClick = function () {
-    document.querySelector('.new-message .textarea').focus();
+    document.querySelector('.new-message textarea').focus();
 }
 
 //! Window resize (Reset list selector, list displayer & new message textarea)
@@ -140,7 +94,7 @@ const handleWindowResize = function (event) {
     });
 
     // Resize message list
-    document.querySelector('.new-message .textarea').dispatchEvent(new Event('input'));
+    document.querySelector('.new-message textarea').dispatchEvent(new Event('input'));
 
 }
 
@@ -154,10 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('button.list-displayer').addEventListener('click', handleUserListDisplayerClick);
 
     // New message textarea
-    document.querySelector('.new-message .textarea').addEventListener('beforeinput', handleTextareaBeforeInput);
-    document.querySelector('.new-message .textarea').addEventListener('input', resizeMessageList);
-    document.querySelector('.new-message .textarea').addEventListener('focus', handleTextareaFocus);
-    document.querySelector('.new-message .textarea').addEventListener('blur', handleTextareaBlur);
+    document.querySelector('.new-message textarea').addEventListener('input', resizeMessageTextarea);
+    document.querySelector('.new-message textarea').addEventListener('input', resizeMessageList);
+    document.querySelector('.new-message textarea').addEventListener('focus', handleTextareaFocus);
+    document.querySelector('.new-message textarea').addEventListener('blur', handleTextareaBlur);
     
     document.querySelector('.new-message .placeholder').addEventListener('click', handleTextareaPlaceholderClick);
 

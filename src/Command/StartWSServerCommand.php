@@ -13,6 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
     name: 'app:wsserver:start',
@@ -23,6 +24,7 @@ class StartWSServerCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $JWTManager,
+        private ValidatorInterface $validator,
         private DateTimeFormatter $dateTimeFormatter,
     ) {
         parent::__construct();
@@ -36,7 +38,12 @@ class StartWSServerCommand extends Command
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(
-                    new Notification($this->entityManager, $this->JWTManager, $this->dateTimeFormatter)
+                    new Notification(
+                        $this->entityManager, 
+                        $this->JWTManager, 
+                        $this->validator,
+                        $this->dateTimeFormatter
+                    )
                 )
             ),
             $port

@@ -12,12 +12,14 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserTo
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Notification implements MessageComponentInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $JWTManager,
+        private ValidatorInterface $validator,
         private DateTimeFormatter $dateTimeFormatter,
         private $clients = new \SplObjectStorage,
     ) {
@@ -69,6 +71,11 @@ class Notification implements MessageComponentInterface
             throw new WebSocketInvalidRequestException;
         }
 
+        if (in_array($messageData->action, ['new'])) {
+            $messageData->data = json_decode($messageData->data);
+            if (null === $messageData) {throw new WebSocketInvalidRequestException;}
+        }
+
         //? Dispatching action
         $data = null;
         $receiversId = [$user->getId()];
@@ -85,6 +92,19 @@ class Notification implements MessageComponentInterface
             case 'show':
                 $data = ConversationController::show($targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
+            case 'new':
+                if (empty($messageData->data->message)) {
+                    throw new WebSocketInvalidRequestException;
+                }
+
+                [$data, $sendToTarget] = ConversationController::new($targetedUser, $user, $messageData->data->message, $this->entityManager, $this->validator, $this->dateTimeFormatter);
+
+                // On success message is also sent to targeted user
+                if ($sendToTarget) {
+                    $receiversId[] = $targetedUser->getId();
+                }
+                
+                break;
             default:
                 throw new WebSocketInvalidRequestException;
                 break;
@@ -96,6 +116,9 @@ class Notification implements MessageComponentInterface
                 $this->send($client, $messageData->action, $data);
             }
         }
+
+        // Clear cache for next message
+        $this->entityManager->clear();
 
         echo "Message sent by connection {$from->resourceId}\n";        
     }

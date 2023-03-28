@@ -20,10 +20,11 @@ conn.onmessage = function(e) {
     const message = JSON.parse(e.data);
     const data = JSON.parse(message.data);
     console.log(message);
+    console.log(data);
 
     switch (message.action) {
         case 'error':
-            displayError(data);
+            displayError(data.message);
             break;
         case 'fatalError':
             fatalErrorMessage = data.message;
@@ -42,6 +43,9 @@ conn.onmessage = function(e) {
             break;
         case 'show':
             show(data);
+            break;
+        case 'new':
+            newMessage(data);
             break;
     }
 };
@@ -71,6 +75,48 @@ const handleWebSocketCTA = function (event) {
     );
 }
 
+const handleSendMessage = function () {
+    const messageElm = document.querySelector('.new-message textarea');
+    messageElm.value = messageElm.value.trim()
+    if ('' === messageElm.value) return;
+
+
+    send(
+        'new', 
+        JSON.stringify({message: messageElm.value}),
+        document.querySelector('section:last-child').dataset.loadedUserId
+    );
+
+    messageElm.value = '';
+
+    // Dispatch input event resizes message list
+    document.querySelector('.new-message textarea').dispatchEvent(new Event('input'));
+}
+
+const handleClickWithinChatSection = function (event) {
+    // Set read when clicking chat section
+    const loadedUserId = document.querySelector('section:last-child').dataset.loadedUserId;
+    const conversationElm = document.querySelector(`.chat-list article[data-targeted-user-id="${loadedUserId}"]`)
+    
+    if (
+        document.querySelector('section:last-child').contains(event.target)
+        && null !== conversationElm && conversationElm.classList.contains('has-notification')
+    ) send('setRead', '', loadedUserId);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('#send-message').addEventListener('click', handleSendMessage);
+    document.querySelector('.new-message textarea').addEventListener('keydown', function (keyEvent) {
+        if (keyEvent.code !== 'Enter' || keyEvent.code === 'Enter' && keyEvent.shiftKey) return;
+        keyEvent.preventDefault();
+        handleSendMessage();
+    })
+
+    document.body.addEventListener('click', handleClickWithinChatSection);
+})
+
+
+//#region creating functions
 function createConversationElm(data, otherUserIndex, currentUserIndex) {
     const userId = data.users[otherUserIndex].id;
 
@@ -102,7 +148,7 @@ function createConversationElm(data, otherUserIndex, currentUserIndex) {
     return document.querySelector('.chat-list ul li.empty + *');
 }
 
-function createMessageElm(message, otherUserId) {
+function createMessageElm(message, otherUserId, first = false) {
     const newMessageElm = document.querySelector('#message-li-template').content.cloneNode(true);
 
     if (message.user.id === otherUserId)
@@ -114,14 +160,20 @@ function createMessageElm(message, otherUserId) {
 
     newMessageElm.querySelector('.message').textContent = message.message;
     
-    document.querySelector('.chat ul').appendChild(newMessageElm);
+    if (first) {
+        document.querySelector('.chat ul').prepend(newMessageElm);
+    } else {
+        document.querySelector('.chat ul').appendChild(newMessageElm);
+    }
 
     // Returning conversationElm would return a #document-fragment
     return document.querySelector('.chat ul>*:last-child');
 }
+//#endregion
 
-function displayError(data) {
-    alert('Erreur : ' + data.message);
+//#region WebSocket action handlers
+function displayError(message) {
+    alert('Erreur : ' + message);
 }
 
 function block(data) {
@@ -140,6 +192,7 @@ function block(data) {
     if (null !== userLiElm) userLiElm.remove();
 
     // Change block button to unblock button
+    userElm.classList.remove('active');
     userElm.querySelector('button[data-action="block"] span').textContent = 'Débloquer';
     userElm.querySelector('button[data-action="block"]').dataset.action = 'unblock';
 
@@ -213,7 +266,6 @@ function show(data) {
         conversationElm = createConversationElm(data, otherUserIndex, currentUserIndex).querySelector('article');
     if (null !== conversationElm) conversationElm.classList.add('active');
     if (null !== userElm) userElm.classList.add('active');
-    if (null !== blockedUserElm) blockedUserElm.classList.add('active');
 
     // Set conversation to read since it is being read
     if (null !== conversationElm) conversationElm.classList.remove('has-notification');
@@ -249,5 +301,40 @@ function show(data) {
     });
 
     // Dispatch input event resizes message list
-    document.querySelector('.new-message .textarea').dispatchEvent(new Event('input'));
+    document.querySelector('.new-message textarea').dispatchEvent(new Event('input'));
+
+    document.querySelector('.new-message textarea').classList.remove('active');
+    document.querySelector('.new-message textarea').value = '';
 }
+
+function newMessage(data) {
+    // Display errors if needed
+    if (typeof data.id === 'undefined') {
+        data.forEach(message => {
+            displayError(message);
+        });
+        return;
+    }
+
+    const [otherUserIndex, currentUserIndex] = data.users[0].id === APP_USER_ID ? [1, 0] : [0, 1];
+    const otherUserId = data.users[otherUserIndex].id;
+
+    // If conversation element doesn't exist create a conversation
+    let conversationElm = document.querySelector(`.chat-list article[data-targeted-user-id="${otherUserId}"]`)
+    if (null === conversationElm)
+        conversationElm = createConversationElm(data, otherUserIndex, currentUserIndex).querySelector('article');
+
+    // Update conversation last update date
+    conversationElm.querySelector('h3 + p').title = data.updatedAt;
+    conversationElm.querySelector('h3 + p').textContent = data.updatedAt;
+
+    // If user is receiver add a notification
+    console.log(otherUserId);
+    if (data.messages[0].user.id === otherUserId) 
+        conversationElm.classList.add('has-notification');
+
+    // If loaded user is other user add message
+    if (otherUserId == document.querySelector('section:last-child').dataset.loadedUserId)
+        createMessageElm(data.messages[0], otherUserId, true);
+}
+//#endregion

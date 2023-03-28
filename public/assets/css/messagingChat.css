@@ -120,6 +120,11 @@
     filter: brightness(0) saturate(100%) invert(94%) sepia(13%) saturate(90%) hue-rotate(325deg) brightness(93%) contrast(89%);
 }
 
+.message-card .message {
+    white-space: pre-line;
+    overflow-wrap: break-word;
+
+}
 
 .message-card .message p {margin: 0;}
 
@@ -146,7 +151,7 @@
     width: calc(100% - 50px);
 }
 
-.new-message .textarea {
+.new-message textarea {
   display: block;
   width: 100%;
   min-height: 75px;
@@ -155,6 +160,7 @@
   padding: 1em;
   overflow-y: auto;
   line-height: 20px;
+  resize: none;
 }
 
 .new-message .placeholder {
@@ -166,7 +172,7 @@
     transition: top .2s ease, left .2s ease;
 }
 
-.new-message .textarea.active + .placeholder {
+.new-message textarea.active + .placeholder {
     top: -10px;
     left: 0;
     padding: .15em .3em;
@@ -182,7 +188,7 @@
     transition: all .3s ease;
 }
 
-.new-message .textarea.active ~ .bar {width: 100%;}
+.new-message textarea.active ~ .bar {width: 100%;}
 
 .new-message .button-wrapper {
     width: 50px;

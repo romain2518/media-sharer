@@ -27,7 +27,7 @@ class Conversation
     #[Groups(['api_conversation_light', 'api_conversation_detailed'])]
     private ?\DateTimeInterface $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'conversation', targetEntity: Message::class, cascade: ['persist'], orphanRemoval: true)]
     #[Groups('api_conversation_detailed')]
     private Collection $messages;
 
