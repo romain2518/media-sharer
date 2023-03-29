@@ -9,6 +9,7 @@
         <!-- Stylesheets -->
         <link rel="stylesheet" href="{{ asset('assets/css/normalize.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/lib/awesome-notifications/style.css') }}"></link>
         {% block stylesheets %}{% endblock %}
 
         <!-- Font -->
@@ -32,6 +33,7 @@
         {% include "_partials/_up_button.html.twig" %}
 
         <script src="{{ asset('assets/js/main.js') }}"></script>
+        <script src="{{ asset('assets/lib/awesome-notifications/index.var.js') }}"></script>
         {% block scripts %}{% endblock %}
     </body>
 </html>

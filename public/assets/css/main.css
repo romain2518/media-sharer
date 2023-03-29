@@ -121,6 +121,10 @@ ul {
     background-color: unset;
 }
 
+/* > Awesome notifications lib style override */
+.awn-btn {cursor: pointer;}
+/* < Awesome notifications lib style override */
+
 .pagination a {
     width: fit-content;
     padding: .5em;

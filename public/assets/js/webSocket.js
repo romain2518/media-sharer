@@ -1,5 +1,9 @@
 const conn = new WebSocket('ws://localhost:8080?token='+JWTToken);
 let fatalErrorMessage = null
+let notifier = new AWN({
+    enabled: false,
+    position: 'bottom-left',
+});
 
 conn.onopen = function(e) {
     console.log("Connexion établie !");
@@ -9,10 +13,8 @@ conn.onopen = function(e) {
     });
 };
 conn.onclose = function(e) {
-    alert(
-        'Erreur, la connexion au serveur a été interrompue, veuillez actualiser la page.\nSi le problème persiste veuillez réessayer plus tard.' 
-        + (null === fatalErrorMessage ? '' : '\n\nMessage d\'erreur : '+fatalErrorMessage)
-    );
+    displayFatalError();
+    
     console.log("Connexion interrompue !");
 };
 
@@ -54,6 +56,11 @@ conn.onmessage = function(e) {
 };
 
 function send (action, data, targetedUserId) {
+    if (1 !== conn.readyState) {
+        displayFatalError();
+        return;
+    }
+
     conn.send(
         JSON.stringify({
             action: action, 
@@ -192,8 +199,33 @@ function createMessageElm(message, otherUserId, first = false) {
 //#endregion
 
 //#region WebSocket action handlers
+function displayFatalError() {
+    let message = '<h3>Erreur, la connexion au serveur a été interrompue</h3><p>Veuillez actualiser la page.</p>';
+    
+    if (null !== fatalErrorMessage)
+        message+=`<p>Message d'erreur : <code>${fatalErrorMessage}</code></p>`;
+    
+    notifier.confirm(
+        message,
+        function () {location.reload();},
+        null,
+        {
+            labels: {
+                confirm: '',
+                confirmOk: 'Recharger la page',
+                confirmCancel: 'Annuler',
+            }
+        }
+    );
+
+    // Clicking outside close the modal
+    document.querySelector('#awn-popup-wrapper').addEventListener('click', function (event) {
+        if (event.target === document.querySelector('#awn-popup-wrapper')) document.querySelector('#awn-popup-wrapper').remove();
+    })
+}
+
 function displayError(message) {
-    alert('Erreur : ' + message);
+    notifier.alert(message);
 }
 
 function block(data) {
