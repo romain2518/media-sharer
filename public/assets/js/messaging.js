@@ -1,5 +1,10 @@
 //! List selector
 const handleNavBtnClick = function (event) {
+    // Empty search bar
+    document.querySelector('.search input').value = '';
+    document.querySelector('.search input').dispatchEvent(new Event('input'));
+
+
     // Remove active from last button
     const lastButton = document.querySelector('nav.list-selector button.active');
     lastButton.classList.remove('active');
@@ -83,6 +88,15 @@ const handleTextareaPlaceholderClick = function () {
     document.querySelector('.new-message textarea').focus();
 }
 
+const handleListSearch = function (event) {
+    document.querySelectorAll('.list.active .user-card').forEach(userLiElm => {
+        userLiElm.closest('li').classList.remove('hidden');
+
+        if ('' !== event.currentTarget.value && !userLiElm.querySelector('h3').textContent.startsWith(event.currentTarget.value))
+            userLiElm.closest('li').classList.add('hidden');
+    });
+}
+
 //! Window resize (Reset list selector, list displayer & new message textarea)
 const handleWindowResize = function (event) {
     // Set show to displayer button
@@ -99,6 +113,9 @@ const handleWindowResize = function (event) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Search bar
+    document.querySelector('.search input').addEventListener('input', handleListSearch);
+
     // List selector
     document.querySelectorAll('nav.list-selector button').forEach(button => {
         button.addEventListener('click', handleNavBtnClick);
