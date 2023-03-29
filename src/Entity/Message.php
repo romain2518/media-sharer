@@ -129,6 +129,25 @@ class Message
         return $this;
     }
 
+    #[ORM\PrePersist]
+    public function checkConversationMessagesLimit()
+    {
+        // Current message is not persisted yet,
+        // To reduce the message count to 50, we must accept only first 49 messages
+        $messageCount = count($this->conversation->getMessages());
+        $howManyToRemove = $messageCount - 49;
+        
+        if ($howManyToRemove < 1) {
+            return;
+        }
+                
+        // Remove old messages
+        for ($i=$messageCount-1; $i > $messageCount-$howManyToRemove-1; $i--) { 
+            $this->conversation->getMessages()[$i]->setConversation(null);
+            $this->conversation->getMessages()->remove($i);
+        }
+    }
+
     #[ORM\PreRemove]
     public function preRemove(LifecycleEventArgs $args): void {
         $message = $args->getObject();

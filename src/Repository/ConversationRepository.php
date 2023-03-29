@@ -85,7 +85,7 @@ class ConversationRepository extends ServiceEntityRepository
             ->setParameter('user1', $user1)
             ->setParameter('user2', $user2)
             ->addOrderBy('su.id', 'ASC')
-            ->addOrderBy('m.createdAt', 'DESC')
+            ->addOrderBy('m.id', 'DESC') // Two messages could be sent at the exact same time, instead we can order by id DESC
             ->getQuery()
             ->getOneOrNullResult()
         ;

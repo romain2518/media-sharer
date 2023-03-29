@@ -119,17 +119,16 @@ class ConversationController extends WebSocketCoreController
         $newMessage
             ->setMessage($message)
             ->setUser($user)
+            ->setConversation($conversation)
         ;
 
         $errors = $validator->validate($newMessage);
         if (count($errors) > 0) {
             return [self::serializeErrors($errors), false];
         }
-
-        $conversation
-            ->addMessage($newMessage)
-            ->setUpdatedAt(new \DateTime('now'))
-        ;
+        
+        $entityManager->persist($newMessage);
+        $conversation->setUpdatedAt(new \DateTime('now'));
         
         // Mark conversation has unread for targeted user
         $statusUserIndex = $conversation->getStatuses()[0]->getUser() === $targetedUser ? 0 : 1;
@@ -164,7 +163,7 @@ class ConversationController extends WebSocketCoreController
             throw new WebSocketInvalidRequestException('Vous ne pouvez pas accéder à une conversation avec un utilisateur bloqué.');
         }
 
-        $conversation = $conversationRepository->findOneByUsersDetailed($user, $targetedUser);
+        $conversation = $conversationRepository->findOneByUsersLight($user, $targetedUser);
         $message = $messageRepository->find($messageId);
 
         // Throws error If conversation or message is null, 

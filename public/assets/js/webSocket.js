@@ -125,7 +125,7 @@ const handleDeleteMessage = function (event) {
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#send-message').addEventListener('click', handleSendMessage);
     document.querySelector('.new-message textarea').addEventListener('keydown', function (keyEvent) {
-        if (keyEvent.code !== 'Enter' || keyEvent.code === 'Enter' && keyEvent.shiftKey) return;
+        if (keyEvent.key !== 'Enter' || keyEvent.key === 'Enter' && keyEvent.shiftKey) return;
         keyEvent.preventDefault();
         handleSendMessage();
     })
@@ -349,7 +349,6 @@ function newMessage(data) {
     conversationElm.querySelector('h3 + p').textContent = data.updatedAt;
 
     // If user is receiver add a notification
-    console.log(otherUserId);
     if (data.messages[0].user.id === otherUserId) 
         conversationElm.classList.add('has-notification');
 
