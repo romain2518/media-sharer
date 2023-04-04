@@ -1,4 +1,4 @@
-const conn = new WebSocket('ws://localhost:8080?token='+JWTToken);
+const conn = new WebSocket(`ws://${BASE_URL}:8080?token=${JWTToken}`);
 let fatalErrorMessage = null
 let notifier = new AWN({
     enabled: false,

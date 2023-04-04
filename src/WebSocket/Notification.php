@@ -51,7 +51,13 @@ class Notification implements MessageComponentInterface
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
+        // Clear previous cache
+        $this->entityManager->clear();
+
         //? Checking datas
+        if (!is_string($msg)) {
+            throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);
+        }
         $messageData = json_decode(trim($msg));
 
         if (!isset($messageData->action) || !isset($messageData->data) || !isset($messageData->targetedUserId)) {
@@ -72,6 +78,9 @@ class Notification implements MessageComponentInterface
         }
 
         if (in_array($messageData->action, ['new', 'delete'])) {
+            if (!is_string($messageData->data)) {
+                throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);
+            }
             $messageData->data = json_decode($messageData->data);
             if (null === $messageData) {throw new WebSocketInvalidRequestException;}
         }
@@ -93,7 +102,7 @@ class Notification implements MessageComponentInterface
                 $data = ConversationController::show($targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
             case 'new':
-                if (empty($messageData->data->message)) {
+                if (!isset($messageData->data->message)) {
                     throw new WebSocketInvalidRequestException;
                 }
 
@@ -128,10 +137,7 @@ class Notification implements MessageComponentInterface
             }
         }
 
-        // Clear cache for next message
-        $this->entityManager->clear();
-
-        echo "Message sent by connection {$from->resourceId}\n";        
+        echo "Message sent by connection {$from->resourceId}\n";
     }
 
     public function onClose(ConnectionInterface $conn) {

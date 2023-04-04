@@ -134,9 +134,15 @@ class Message
     {
         // Current message is not persisted yet,
         // To reduce the message count to 50, we must accept only first 49 messages
+        // (this limiter only work for flushed entities or non-flushed that already are in $conversation->messages)
         $messageCount = count($this->conversation->getMessages());
         $howManyToRemove = $messageCount - 49;
         
+        // Case where current message has already been added to $conversation->messages
+        if ($this->conversation->getMessages()[0] === $this) {
+            $howManyToRemove--;
+        }
+
         if ($howManyToRemove < 1) {
             return;
         }

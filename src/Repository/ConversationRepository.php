@@ -59,6 +59,7 @@ class ConversationRepository extends ServiceEntityRepository
             ->setParameter('user1', $user1)
             ->setParameter('user2', $user2)
             ->addOrderBy('su.id', 'ASC')
+            ->addOrderBy('u.id', 'ASC')
             ->getQuery()
             ->getOneOrNullResult()
         ;
@@ -85,6 +86,7 @@ class ConversationRepository extends ServiceEntityRepository
             ->setParameter('user1', $user1)
             ->setParameter('user2', $user2)
             ->addOrderBy('su.id', 'ASC')
+            ->addOrderBy('u.id', 'ASC')
             ->addOrderBy('m.id', 'DESC') // Two messages could be sent at the exact same time, instead we can order by id DESC
             ->getQuery()
             ->getOneOrNullResult()
@@ -131,6 +133,7 @@ class ConversationRepository extends ServiceEntityRepository
             ->orderBy('c.updatedAt', 'DESC')
             ->addOrderBy('c.createdAt', 'DESC')
             ->addOrderBy('su.id', 'ASC')
+            ->addOrderBy('u.id', 'ASC')
             ->getQuery()
             ->getResult()
         ;

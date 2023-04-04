@@ -149,6 +149,7 @@ class AppFixtures extends Fixture
                 } while (
                     in_array($user->getEmail() . '-' . $user2->getEmail(), $existingConversations)
                     || in_array($user2->getEmail() . '-' . $user->getEmail(), $existingConversations)
+                    || $user === $user2
                 );
                 
                 $existingConversations[] = $user->getEmail() . '-' . $user2->getEmail();

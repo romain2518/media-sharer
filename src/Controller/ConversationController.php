@@ -110,14 +110,14 @@ class ConversationController extends WebSocketCoreController
         }
 
         $conversation = $conversationRepository->findOneByUsersDetailed($user, $targetedUser);
-        if (null === $conversation || '' === trim($message)) {
+        if (null === $conversation) {
             throw new WebSocketInvalidRequestException;
         }
 
         // Creating object
         $newMessage = new Message();
         $newMessage
-            ->setMessage($message)
+            ->setMessage(trim($message))
             ->setUser($user)
             ->setConversation($conversation)
         ;

@@ -30,8 +30,12 @@ class StartWSServerCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * @return void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        //! If changing the port, make sure to change to port used in tests/ConversationTest.php
         $port = 8080;
         $output->writeln("Starting server on port " . $port);
 

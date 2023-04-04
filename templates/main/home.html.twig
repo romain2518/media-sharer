@@ -265,9 +265,6 @@
     </section>
 </main>
     
-<input type="hidden" name="block_user_token" value="{{ csrf_token('block user') }}">
-<input type="hidden" name="unblock_user_token" value="{{ csrf_token('unblock user') }}">
-
 <template id="conversation-li-template">
     <li>
         <article class="user-card WS_CTA" tabindex="0" data-action="show">
@@ -332,7 +329,8 @@
     </li>
 </template>
 
-<script>
+<script id="JS-CONST">
+    const BASE_URL = {{ app.request.server.get('SERVER_NAME')|json_encode|raw }};
     const JWTToken = {{ token|json_encode|raw }};
     const APP_USER_ID = {{ app.user.id|json_encode|raw }};
 </script>
