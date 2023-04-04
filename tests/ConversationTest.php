@@ -4,7 +4,6 @@ namespace App\Tests;
 
 use App\Entity\User;
 use App\Repository\ConversationRepository;
-use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use WebSocket\Client;
