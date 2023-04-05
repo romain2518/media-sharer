@@ -66,7 +66,7 @@ class Notification implements MessageComponentInterface
 
         //? Checking user & target user (both must be not null and different from each other)
         $user = $this->getUser($from->userId);
-        $targetedUser = $this->getUser($messageData->targetedUserId);
+        $targetedUser = $this->getUser(intval($messageData->targetedUserId));
 
         if (null === $user) {
             // Throw fatal error if current user has been deleted
