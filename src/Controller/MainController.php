@@ -19,7 +19,7 @@ class MainController extends AbstractController
         /** @var User $user */
         return $this->render('main/home.html.twig', [
             'token' => $JWTManager->create($user),
-            'users' => $userRepository->findBy([], ['pseudo' => 'ASC']),
+            'users' => $userRepository->findNonBlockedUsers($user),
             'blocked_users' => $user->getBlockedUsers(),
             'conversations' => $conversationRepository->findAllByUser($user),
         ]);

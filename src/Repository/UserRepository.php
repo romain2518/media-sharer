@@ -56,6 +56,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->save($user, true);
     }
 
+   /**
+    * @return User[] Returns an array of User objects
+    */
+   public function findNonBlockedUsers(User $user): array
+   {
+        $blockedUsersIdSubQuery = $this->_em->createQueryBuilder()
+            ->select('bu')
+            ->from('App\Entity\User', 'u2')
+            ->leftJoin('u2.blockedUsers', 'bu')
+            ->where('u2 = :user')
+            ->getDQL();
+
+        return $this->createQueryBuilder('u')
+            ->andWhere('u NOT IN ('. $blockedUsersIdSubQuery . ')')
+            ->setParameter('user', $user)
+            ->orderBy('u.pseudo', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+   }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
