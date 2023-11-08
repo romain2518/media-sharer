@@ -45,6 +45,8 @@ main>section:last-child p.empty {
 
 main>section:last-child.is-empty p.empty {display: block;}
 
+main>section:last-child .call.active ~ p.empty {display: none;}
+
 main>section:last-child.is-empty .himself,
 main>section:last-child.is-empty .chat,
 main>section:last-child.is-empty .new-message {display: none;}

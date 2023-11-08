@@ -183,4 +183,9 @@ class ConversationController extends WebSocketCoreController
 
         return [self::serialize($message, 'api_message', $dateTimeFormatter), $sendToTarget];
     }
+
+    public static function serializeUser(User $user, DateTimeFormatter $dateTimeFormatter): string
+    {
+        return self::serialize($user, 'api_user_light', $dateTimeFormatter);
+    }
 }

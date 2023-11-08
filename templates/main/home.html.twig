@@ -165,8 +165,8 @@
         </div>
     </section>
     <section class="is-empty">
-        <div class="call calling">
-            <div class="timer"><img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge"><span>01:34</span></div>
+        <div class="call">
+            <div class="timer"><img src="{{ asset('assets/images/icons/clock.svg') }}" alt="Horloge"><span>00:00</span></div>
             <p class="status calling">Tentative d'appel...</p>
             <p class="status call-canceled">Appel annulé</p>
             <p class="status incoming-call">Appel entrant...</p>
@@ -175,14 +175,14 @@
             <p class="status call-ended">Fin d'appel</p>
             <div class="users">
                 <div class="user">
-                    <img src="https://i.pravatar.cc/150?img=3" alt="Photo de profil 1">
-                    <div class="camera"></div>
-                    <p>Pseudo 1</p>
+                    <img src="{{ asset('assets/images/userPictures/' ~ app.user.picturePath ?? '0.svg') }}" alt="Votre photo de profil">
+                    <video class="camera"></video>
+                    <p>{{ app.user.pseudo }}</p>
                 </div>
                 <div class="user">
-                    <img src="https://i.pravatar.cc/150?img=1" alt="Photo de profil 2">
-                    <div class="camera"></div>
-                    <p>Pseudo 2</p>
+                    <img src="#" alt="Photo de profil de l'utilisateur cible">
+                    <video class="camera"></video>
+                    <p></p>
                 </div>
             </div>
             <div class="call-animation">
@@ -191,8 +191,8 @@
                 <div></div>
             </div>
             <div class="screen-share">
-                <div class="screen-wrapper"><img class="screen" src="../../MatheoFontaine.github.io/image/bg1.png" alt=""></div>
-                <div class="screen-wrapper"><img class="screen" src="../../MatheoFontaine.github.io/image/bg1.png" alt=""></div>
+                <div class="screen-wrapper"><video class="screen"></video></div>
+                <div class="screen-wrapper"><video class="screen"></video></div>
             </div>
             <div class="actions">
                 <button id="call-mute" title="Désactiver le micro"><img src="{{ asset('assets/images/icons/mic.svg') }}" alt=""></button>
@@ -201,7 +201,7 @@
                 <button id="call-camera-on" title="Activer la caméra"><img src="{{ asset('assets/images/icons/camera-off') }}.svg" alt=""></button>
                 <button id="call-screen-share-on" title="Partager l'écran"><img src="{{ asset('assets/images/icons/screen.svg') }}" alt=""></button>
                 <button id="call-screen-share-off" title="Désactiver le partage d'écran"><img src="{{ asset('assets/images/icons/screen-crossed') }}.svg" alt=""></button>
-                <button id="call-join" title="Rejoindre l'appel"><img src="{{ asset('assets/images/icons/phone-call') }}.svg" alt=""></button>
+                <button id="call-accept" title="Rejoindre l'appel"><img src="{{ asset('assets/images/icons/phone-call') }}.svg" alt=""></button>
                 <button id="call-end" title="Mettre fin à l'appel"><img src="{{ asset('assets/images/icons/phone-call') }}-end.svg" alt=""></button>
                 <button id="call-fullscreen-enter" title="Plein écran"><img src="{{ asset('assets/images/icons/fullscreen.svg') }}" alt=""></button>
                 <button id="call-fullscreen-exit" title="Quitté le mode plein écran"><img src="{{ asset('assets/images/icons/fullscreen-off') }}.svg" alt=""></button>
@@ -214,8 +214,8 @@
                 <p></p>
             </div>
             <div class="actions">
-                <button title="Démarrer un appel"><img src="{{ asset('assets/images/icons/phone.svg') }}" alt="Démarrer un appel"></button>
-                <button title="Démarrer un appel vidéo"><img src="{{ asset('assets/images/icons/camera.svg') }}" alt="Démarrer un appel vidéo"></button>
+                <button id="start-call-button" title="Démarrer un appel"><img src="{{ asset('assets/images/icons/phone.svg') }}" alt="Démarrer un appel"></button>
+                <button id="start-video-call-button" title="Démarrer un appel vidéo"><img src="{{ asset('assets/images/icons/camera.svg') }}" alt="Démarrer un appel vidéo"></button>
             </div>
             <div class="dropdown">
                 <button type="button">
@@ -338,4 +338,5 @@
 
 {% block scripts %}
     <script type="module" src="{{ asset('assets/js/homeApp.js') }}"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 {% endblock %}

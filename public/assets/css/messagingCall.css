@@ -56,12 +56,13 @@
 
 .call .user img,
 .call .user .camera {
+    object-fit: cover;
     width: 150px;
     height: 150px;
 }
 
 .call .user img {border-radius: 50%;}
-.call .user .camera {display: none;}
+/* .call .user .camera {display: none;} */
 
 .call .user p {
     font-weight: bold;
@@ -123,6 +124,8 @@
     object-fit: cover;
 }
 
+.call .screen-share .screen.active {display: block;}
+
 .call .actions {
     margin: auto auto 2em auto;
 }
@@ -147,10 +150,13 @@
 }
 
 .call.calling       .actions #call-end,
-.call.incoming-call .actions #call-join,
+.call.incoming-call .actions #call-accept,
 .call.incoming-call .actions #call-end,
 .call.on-call       .actions #call-end,
 .call.on-call       .actions #call-mute,
 .call.on-call       .actions #call-camera-on,
 .call.on-call       .actions #call-screen-share-on,
 .call.on-call       .actions #call-fullscreen-enter {display: inline-block;}
+
+.call.on-call       .actions #call-screen-share-on.active {display: none;}
+.call.on-call       .actions #call-screen-share-on.active + #call-screen-share-off {display: inline-block;}

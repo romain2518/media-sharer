@@ -1,3 +1,5 @@
+import messagingCall from "./messagingCall.js";
+
 const webSocket = {
     init: function () {
         this.notifier = new AWN({
@@ -53,7 +55,7 @@ const webSocket = {
     
         webSocket.send(
             'new', 
-            JSON.stringify({message: messageElm.value}),
+            {message: messageElm.value},
             document.querySelector('section:last-child').dataset.loadedUserId
         );
     
@@ -77,7 +79,7 @@ const webSocket = {
     
         webSocket.send(
             'delete', 
-            JSON.stringify({id: messageElm.dataset.id}),
+            {id: messageElm.dataset.id},
             document.querySelector('section:last-child').dataset.loadedUserId
         );    
     },
@@ -102,11 +104,11 @@ const webSocket = {
             
         console.log("Connexion interrompue !");
     },
-    handleWebSocketMessage: function (event) {
+    handleWebSocketMessage: async function (event) {
         const message = JSON.parse(event.data);
         const data = JSON.parse(message.data);
-        console.log(message);
-        console.log(data);
+        // console.log(message);
+        // console.log(data);
     
         switch (message.action) {
             case 'error':
@@ -135,6 +137,36 @@ const webSocket = {
                 break;
             case 'delete':
                 this.actions.deleteMessage(data);
+                break;
+            case 'is-client-ready':
+                messagingCall.isClientReady(data);
+                break;
+            case 'client-already-on-call':
+                messagingCall.clientAlreadyOnCall(data);
+                break;
+            case 'call-canceled':
+                messagingCall.callCanceled(data);
+                break;
+            case 'call-denied':
+                messagingCall.callDenied(data);
+                break;
+            case 'call-hung-up':
+                messagingCall.callHungUp(data);
+                break;
+            case 'client-is-ready':
+                await messagingCall.createOffer(data);
+                break;
+            case 'client-offer':
+                await messagingCall.createAnswer(JSON.parse(data.user), data.callData);
+                break;
+            case 'client-answer':
+                await messagingCall.processAnswer(JSON.parse(data.user), data.callData);
+                break;
+            case 'client-candidate':
+                await messagingCall.addClientCandidate(JSON.parse(data.user), data.callData);
+                break;
+            case 'add-new-track':
+                await messagingCall.addNewTrack(JSON.parse(data.user), data.callData);
                 break;
         }
     },
@@ -315,7 +347,6 @@ const webSocket = {
         
             const himselfElm = document.querySelector('.himself');
         
-        
             himselfElm.querySelector('.profile-pic').src = 'assets/images/userPictures/' + data.users[otherUserIndex].picturePath ?? '0.svg';
             himselfElm.querySelector('h2').textContent = data.users[otherUserIndex].pseudo;
             himselfElm.querySelector('h2+p').textContent = 'Inscrit ' + data.users[otherUserIndex].createdAt;
@@ -326,6 +357,12 @@ const webSocket = {
             });
             
             himselfElm.querySelector('.report-link').href = '/signalement/utilisateur/' + otherUserId;
+
+            // Fill call section
+            const callTargetedUserElm = document.querySelector('.call .users .user:last-child');
+
+            callTargetedUserElm.querySelector('img').src = 'assets/images/userPictures/' + data.users[otherUserIndex].picturePath ?? '0.svg';
+            callTargetedUserElm.querySelector('p').textContent = data.users[otherUserIndex].pseudo;
         
             // Empty the message list
             document.querySelector('.chat ul').innerHTML = '';;

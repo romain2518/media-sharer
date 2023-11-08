@@ -77,12 +77,8 @@ class Notification implements MessageComponentInterface
             throw new WebSocketInvalidRequestException;
         }
 
-        if (in_array($messageData->action, ['new', 'delete'])) {
-            if (!is_string($messageData->data)) {
-                throw new WebSocketInvalidRequestException(isFatal:  WebSocketInvalidRequestException::FATAL_ERROR);
-            }
-            $messageData->data = json_decode($messageData->data);
-            if (null === $messageData) {throw new WebSocketInvalidRequestException;}
+        if (in_array($messageData->action, ['new', 'delete', 'client-offer', 'client-answer']) && empty($messageData->data)) {
+            throw new WebSocketInvalidRequestException;
         }
 
         //? Dispatching action
@@ -102,11 +98,11 @@ class Notification implements MessageComponentInterface
                 $data = ConversationController::show($targetedUser, $user, $this->entityManager, $this->dateTimeFormatter);
                 break;
             case 'new':
-                if (!isset($messageData->data->message)) {
+                if (!is_string($messageData->data)) {
                     throw new WebSocketInvalidRequestException;
                 }
 
-                [$data, $sendToTarget] = ConversationController::new($targetedUser, $user, $messageData->data->message, $this->entityManager, $this->validator, $this->dateTimeFormatter);
+                [$data, $sendToTarget] = ConversationController::new($targetedUser, $user, $messageData->data, $this->entityManager, $this->validator, $this->dateTimeFormatter);
 
                 if ($sendToTarget) {
                     $receiversId[] = $targetedUser->getId();
@@ -114,16 +110,35 @@ class Notification implements MessageComponentInterface
                 
                 break;
             case 'delete':
-                if (empty($messageData->data->id)) {
-                    throw new WebSocketInvalidRequestException;
-                }
-
-                [$data, $sendToTarget] = ConversationController::delete($targetedUser, $user, $messageData->data->id, $this->entityManager, $this->dateTimeFormatter);
+                [$data, $sendToTarget] = ConversationController::delete($targetedUser, $user, intval($messageData->data), $this->entityManager, $this->dateTimeFormatter);
 
                 if ($sendToTarget) {
                     $receiversId[] = $targetedUser->getId();
                 }
                 
+                break;
+            case 'is-client-ready':
+            case 'client-already-on-call':
+            case 'call-canceled':
+            case 'call-denied':
+            case 'client-is-ready':
+            case 'call-hung-up':
+                $data = ConversationController::serializeUser($user, $this->dateTimeFormatter);
+                $receiversId = [$targetedUser->getId()];
+
+                break;
+            case 'client-offer':
+            case 'client-answer':
+            case 'client-candidate':
+            case 'add-new-track':
+                $user = ConversationController::serializeUser($user, $this->dateTimeFormatter);
+                $data = json_encode([
+                    'user' => $user,
+                    'callData' => $messageData->data,
+                ]);
+
+                $receiversId = [$targetedUser->getId()];
+
                 break;
             default:
                 throw new WebSocketInvalidRequestException;
@@ -137,7 +152,7 @@ class Notification implements MessageComponentInterface
             }
         }
 
-        echo "Message sent by connection {$from->resourceId}\n";
+        echo "Message {$messageData->action} sent by connection {$from->resourceId}\n";
     }
 
     public function onClose(ConnectionInterface $conn) {
