@@ -8,3 +8,5 @@ Ce projet est une application web de discussion en temps réel (messagerie, appe
 - [Données](docs/data.md)
 - [Routes](docs/routes.md)
 - [User stories](docs/user-stories.md)
+
+Commande de démarage du WebSocket : `php bin/console app:wsserver:start`
